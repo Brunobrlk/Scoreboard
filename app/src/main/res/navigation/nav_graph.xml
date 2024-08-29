@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/menuFragment">
+    <fragment
+        android:id="@+id/scoreFragment"
+        android:name="com.example.scoreboardbrlk.ui.score.ScoreFragment"
+        android:label="ScoreFragment"
+        tools:layout="@layout/fragment_score"/>
+    <fragment
+        android:id="@+id/drawTeamsFragment"
+        android:name="com.example.scoreboardbrlk.ui.draw.DrawTeamsFragment"
+        android:label="fragment_draw_teams"
+        tools:layout="@layout/fragment_draw_teams" />
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.example.scoreboardbrlk.ui.menu.MenuFragment"
+        android:label="fragment_menu"
+        tools:layout="@layout/fragment_menu" >
+        <action
+            android:id="@+id/action_menuFragment_to_scoreFragment"
+            app:destination="@id/scoreFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_drawTeamsFragment"
+            app:destination="@id/drawTeamsFragment" />
+    </fragment>
+</navigation>

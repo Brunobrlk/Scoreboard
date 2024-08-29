@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="scoreViewModel"
+            type="com.example.scoreboardbrlk.ui.score.ScoreViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/left_half"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/light_blue"
+            android:onClick="@{() -> scoreViewModel.addPointTeam1() }"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/right_half"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/right_half"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#FF7043"
+            android:onClick="@{() -> scoreViewModel.addPointTeam2() }"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/left_half"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textview_home_title"
+            style="@style/CustomTeamTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/home"
+            app:layout_constraintEnd_toStartOf="@id/right_half"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/textview_counter_team1"
+            style="@style/CustomScoreTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{ String.valueOf(scoreViewModel.counterTeam1) }"
+            app:layout_constraintBottom_toBottomOf="@+id/left_half"
+            app:layout_constraintEnd_toEndOf="@+id/textview_home_title"
+            app:layout_constraintStart_toStartOf="@+id/textview_home_title"
+            app:layout_constraintTop_toBottomOf="@id/textview_home_title"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/textview_guest_title"
+            style="@style/CustomTeamTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/guest"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/left_half"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textview_counter_team2"
+            style="@style/CustomScoreTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{ String.valueOf(scoreViewModel.counterTeam2) }"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textview_guest_title"
+            app:layout_constraintStart_toStartOf="@+id/textview_guest_title"
+            app:layout_constraintTop_toBottomOf="@id/textview_guest_title"
+            tools:text="0" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_reload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:backgroundTint="@color/white"
+            android:onClick="@{() -> scoreViewModel.restartCounters() }"
+            android:src="@drawable/ic_refresh"
+            android:layout_marginTop="8dp"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fab_flip" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_flip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:backgroundTint="@color/white"
+            android:onClick="@{() -> scoreViewModel.flipCounters() }"
+            android:src="@drawable/ic_flip"
+            android:layout_marginBottom="8dp"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toTopOf="@id/fab_reload"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/white"
+            android:contentDescription="@string/settings_description"
+            android:src="@drawable/icons8_settings"
+            app:fabSize="mini"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,66 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-    <LinearLayout
-        android:id="@+id/team1"
+    android:layout_height="match_parent">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_above="@id/strut"
-        android:gravity="center"
-        android:background="@color/light_blue"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Team 1"
-            style="@style/CustomTextStyle"/>
-        <TextView
-            android:id="@+id/textview_counter_team1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="130dp"
-            android:text="0"
-            style="@style/CustomTextStyle"/>
-    </LinearLayout>
-    <View android:id="@+id/strut"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
-    <LinearLayout
-        android:id="@+id/team2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/strut"
-        android:gravity="center"
-        android:background="#FF7043"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Team 2"
-            style="@style/CustomTextStyle"/>
-        <TextView
-            android:id="@+id/textview_counter_team2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="130dp"
-            style="@style/CustomTextStyle"/>
-    </LinearLayout>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_reload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_refresh8"
-        android:layout_centerVertical="true"
-        android:backgroundTint="@color/white"
-        app:fabSize="normal"/>
-</RelativeLayout>
+        app:navGraph="@navigation/nav_graph"
+        app:defaultNavHost="true"/>
+
+</FrameLayout>

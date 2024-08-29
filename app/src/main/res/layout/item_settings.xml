@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <ImageView
+            android:id="@+id/imageView_setting_icon"
+            android:layout_width="32dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_launcher_foreground" />
+
+        <TextView
+            android:id="@+id/textview_setting_title"
+            style="@style/CustomTitleTextStyle"
+            android:textSize="16sp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView_setting_icon"
+            app:layout_constraintEnd_toStartOf="@+id/imagebutton_minus"
+            app:layout_constraintStart_toEndOf="@+id/imageView_setting_icon"
+            app:layout_constraintTop_toTopOf="@+id/imageView_setting_icon"
+            tools:text="Testing Title" />
+
+        <ImageButton
+            android:id="@+id/imagebutton_plus"
+            android:layout_width="48dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/add_solid_svgrepo_com"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imagebutton_minus"
+            android:layout_width="48dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/minus_solid_svgrepo_com"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textview_setting_counter"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textview_setting_counter"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            tools:text="100"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="@+id/imagebutton_plus"
+            app:layout_constraintEnd_toStartOf="@+id/imagebutton_plus"
+            app:layout_constraintTop_toTopOf="@+id/imagebutton_plus" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
