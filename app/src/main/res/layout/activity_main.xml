@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -12,4 +12,4 @@
         app:navGraph="@navigation/nav_graph"
         app:defaultNavHost="true"/>
 
-</FrameLayout>
+</merge>

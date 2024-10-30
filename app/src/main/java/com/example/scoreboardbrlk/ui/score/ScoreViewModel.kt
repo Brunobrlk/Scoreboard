@@ -6,9 +6,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scoreboardbrlk.R
 import com.example.scoreboardbrlk.domain.Setting
+import com.example.scoreboardbrlk.helpers.DatastoreKeys
+import com.example.scoreboardbrlk.helpers.DebugUtils
+import com.example.scoreboardbrlk.repository.AppDatastoreInterface
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ScoreViewModel(private val appDatastoreRepository: AppDatastoreRepository) : ViewModel() {
+@HiltViewModel
+class ScoreViewModel @Inject constructor(private val appDatastoreRepository: AppDatastoreInterface) : ViewModel() {
+    private var _finishingGame = MutableLiveData<Boolean>()
+    val finishingGame: LiveData<Boolean>
+        get() = _finishingGame
+
     private var _settingList = ArrayList<Setting>()
     val settingList: ArrayList<Setting>
         get() = _settingList
@@ -16,48 +26,69 @@ class ScoreViewModel(private val appDatastoreRepository: AppDatastoreRepository)
     private val _counterTeam1 = MutableLiveData(0)
     val counterTeam1: LiveData<Int>
         get() = _counterTeam1
-    private var _releaseAccess = 0
 
     private val _counterTeam2 = MutableLiveData(0)
     val counterTeam2: LiveData<Int>
         get() = _counterTeam2
 
-    private val _accessReleased = MutableLiveData(false)
-    val accessReleased: LiveData<Boolean>
-        get() = _accessReleased
+    private val _pointsToWin = MutableLiveData(15)
+    private val _pointsOnTap = MutableLiveData(1)
+    private var _releaseAccess = 0
+    var showAdvertisement = true
 
     init {
         viewModelScope.launch {
-            val pointsToWin = appDatastoreRepository.getString("pointsToWin")?.toInt()
-            val pointsOnTap = appDatastoreRepository.getString("pointsOnTap")?.toInt()
+            _pointsToWin.value = appDatastoreRepository.getInteger(DatastoreKeys.POINTS_TO_WIN) ?: 15
+            _pointsOnTap.value = appDatastoreRepository.getInteger(DatastoreKeys.POINTS_ON_TAP) ?: 1
+            showAdvertisement = appDatastoreRepository.getBoolean(DatastoreKeys.SHOW_ADVERTISEMENT) ?: true
+
             _settingList = arrayListOf(
-                Setting("pointsToWin", R.drawable.icons8_settings, pointsToWin ?: 15),
-                Setting("pointsOnTap", R.drawable.icons8_settings, pointsOnTap ?: 1))
+                Setting("Points to Win", R.drawable.crown_icon, _pointsToWin.value!!),
+                Setting("Points on Tap", R.drawable.plus_icon, _pointsOnTap.value!!),
+            )
         }
     }
 
-    fun addPointTeam1(){
-        _counterTeam1.value = _counterTeam1.value?.inc()
-    }
-
-    fun addPointTeam2(){
-        _counterTeam2.value = _counterTeam2.value?.inc()
-    }
-
-    fun decrementTeam1(){
-        if(_counterTeam1.value!=0){
-            _counterTeam1.value = _counterTeam1.value?.dec()
+    fun addPointTeam1() {
+        _counterTeam1.value = _counterTeam1.value?.plus(_pointsOnTap.value!!)
+        if ((_counterTeam1.value ?: 0) >= _pointsToWin.value!!) {
+            finishGame()
         }
     }
 
-    fun decrementTeam2(){
-        if(_counterTeam2.value!=0) {
-            _counterTeam2.value = _counterTeam2.value?.dec()
+    fun addPointTeam2() {
+        _counterTeam2.value = _counterTeam2.value?.plus(_pointsOnTap.value!!)
+        if ((_counterTeam2.value ?: 0) >= _pointsToWin.value!!) {
+            finishGame()
         }
     }
 
-    fun releaseAccess(){
-        _accessReleased.value = true
+    private fun finishGame() {
+        triggerFinalScoreDialog()
+        restartCounters()
+    }
+
+    private fun triggerFinalScoreDialog() {
+        _finishingGame.value = true
+        _finishingGame.value = false
+    }
+
+    fun decrementTeam1() {
+        val decrementedValue = _counterTeam1.value?.minus(_pointsOnTap.value!!) ?: 0
+        _counterTeam1.value = if (decrementedValue > 0) decrementedValue else 0
+    }
+
+    fun decrementTeam2() {
+        val decrementedValue = _counterTeam2.value?.minus(_pointsOnTap.value!!) ?: 0
+        _counterTeam2.value = if (decrementedValue > 0) decrementedValue else 0
+    }
+
+    private fun releaseAccess() {
+        showAdvertisement = false
+        DebugUtils.reportDebug("Access Released")
+        viewModelScope.launch {
+            appDatastoreRepository.putBoolean(DatastoreKeys.SHOW_ADVERTISEMENT, showAdvertisement)
+        }
     }
 
     fun restartCounters() {
@@ -65,10 +96,11 @@ class ScoreViewModel(private val appDatastoreRepository: AppDatastoreRepository)
         _counterTeam2.value = 0
     }
 
-    fun flipCounters(){
-        if(_counterTeam1.value==0 && _counterTeam2.value==0){
-            _releaseAccess.inc()
-            if(_releaseAccess==10){
+    fun flipCounters() {
+        if (_counterTeam1.value == 0 && _counterTeam2.value == 0 && showAdvertisement) {
+            _releaseAccess++
+            DebugUtils.reportDebug("Access: $_releaseAccess")
+            if (_releaseAccess == 10) {
                 releaseAccess()
             }
         }
@@ -77,10 +109,17 @@ class ScoreViewModel(private val appDatastoreRepository: AppDatastoreRepository)
         _counterTeam1.value = tempCounterTeam2
     }
 
-    fun saveSettings(list: List<Setting>){
+    fun saveSettings(list: List<Setting>) {
+        updateSettingValues(list)
         viewModelScope.launch {
-            appDatastoreRepository.putString("pointsToWin", list[0].counter.toString())
-            appDatastoreRepository.putString("pointsOnTap", list[1].counter.toString())
+            appDatastoreRepository.putInteger(DatastoreKeys.POINTS_TO_WIN, _pointsToWin.value!!)
+            appDatastoreRepository.putInteger(DatastoreKeys.POINTS_ON_TAP, _pointsOnTap.value!!)
         }
+    }
+
+    private fun updateSettingValues(list: List<Setting>) {
+        _settingList = ArrayList(list)
+        _pointsToWin.value = list[0].value
+        _pointsOnTap.value = list[1].value
     }
 }

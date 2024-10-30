@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Scoreboardbrlk</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name">Placar</string>
     <string name="home">Casa</string>
     <string name="guest">Visitante</string>
-    <string name="score_button_label">Placar</string>
-    <string name="draw_teams_button_label">Sortear Times</string>
     <string name="reset_button_description">Reiniciar Pontuação</string>
     <string name="flip_counter_description">Inverter Pontuação</string>
     <string name="settings_description">Configurações</string>
     <string name="save_description">Salvar</string>
+    <string name="new_game">Novo Jogo</string>
+    <string name="match_score">Placar</string>
+    <string name="reset_score_description">Reiniciar Placar</string>
+    <string name="flip_score_description">Inverter Placar</string>
+    <string name="settings_icon_description">Icone de Configurações</string>
+    <string name="increase_value_button_description">Botão de aumentar valor</string>
+    <string name="decrease_value_button_description">Botão de diminuir valor</string>
 </resources>

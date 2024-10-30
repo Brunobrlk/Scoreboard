@@ -47,15 +47,16 @@
 
         <TextView
             android:id="@+id/textview_counter_team1"
-            style="@style/CustomScoreTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{ String.valueOf(scoreViewModel.counterTeam1) }"
+            style="@style/CustomScoreTextStyle"
             app:layout_constraintBottom_toBottomOf="@+id/left_half"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview_home_title"
-            tools:text="0" />
+            tools:text="0"
+            tools:textSize="340sp"/>
 
         <TextView
             android:id="@+id/textview_guest_title"
@@ -69,15 +70,16 @@
 
         <TextView
             android:id="@+id/textview_counter_team2"
-            style="@style/CustomScoreTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{ String.valueOf(scoreViewModel.counterTeam2) }"
+            style="@style/CustomScoreTextStyle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview_guest_title"
-            tools:text="0" />
+            tools:text="0"
+            tools:textSize="340sp"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_reload"
@@ -85,7 +87,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:backgroundTint="@color/white"
-            android:onClick="@{() -> scoreViewModel.restartCounters() }"
             android:src="@drawable/ic_refresh"
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -120,7 +121,7 @@
             android:layout_marginTop="8dp"
             android:backgroundTint="@color/white"
             android:contentDescription="@string/settings_description"
-            android:src="@drawable/icons8_settings"
+            android:src="@drawable/ic_settings"
             app:fabSize="mini"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

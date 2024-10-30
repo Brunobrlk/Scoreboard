@@ -5,6 +5,6 @@ import androidx.annotation.DrawableRes
 data class Setting(
     val name: String,
     @DrawableRes val icon: Int,
-    var counter: Int,
+    var value: Int,
 )
 

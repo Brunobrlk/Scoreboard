@@ -1,127 +1,216 @@
 package com.example.scoreboardbrlk.ui.score
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.app.Dialog
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
+import android.view.Window
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.example.scoreboardbrlk.BuildConfig
 import com.example.scoreboardbrlk.R
+import com.example.scoreboardbrlk.databinding.CustomSettingsLayoutBinding
+import com.example.scoreboardbrlk.databinding.DialogFinalScoreBinding
 import com.example.scoreboardbrlk.databinding.FragmentScoreBinding
-import com.example.scoreboardbrlk.domain.Setting
+import com.example.scoreboardbrlk.helpers.DebugUtils
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import dagger.hilt.android.AndroidEntryPoint
 
-class ScoreFragment : Fragment(),  SaveClickInterface {
+@AndroidEntryPoint
+class ScoreFragment : Fragment() {
     private lateinit var _binding: FragmentScoreBinding
-    private lateinit var _viewModel: ScoreViewModel
-    private val Context._dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+    private val _viewModel: ScoreViewModel by viewModels()
+    private var _interstitialAd: InterstitialAd? = null
 
-    private val dragThreshold = 200f
-    private var initialY=0f
+    private val _dragThreshold = 200f
+    private var _initialY = 0f
 
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-
-        val viewModelFactory = ScoreViewModelFactory(AppDatastoreRepository(requireContext()))
-        _viewModel = ViewModelProvider(this, viewModelFactory)[ScoreViewModel::class.java]
-        _binding = DataBindingUtil.inflate<FragmentScoreBinding?>(inflater, R.layout.fragment_score, container, false).apply {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = DataBindingUtil.inflate<FragmentScoreBinding?>(
+            inflater,
+            R.layout.fragment_score,
+            container,
+            false
+        ).apply {
             scoreViewModel = _viewModel
             lifecycleOwner = viewLifecycleOwner
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(_binding.textviewHomeTitle){ v, insets ->
-            val orientation = requireContext().resources.configuration.orientation
-            if(orientation == Configuration.ORIENTATION_PORTRAIT){
-                val bars = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
-                v.updatePadding(left=bars.left, top=bars.top, right = bars.right, bottom = bars.bottom)
-            }
-            WindowInsetsCompat.CONSUMED
-        }
+        initLayout()
 
-//        _viewModel.accessReleased.observe(viewLifecycleOwner){ accessReleased ->
-//            val isPremiumKey = intPreferencesKey("is_premium")
-//            Toast.makeText(requireContext(), "Acesso premium desbloqueado", Toast.LENGTH_SHORT).show()
-//        }
-
-        _binding.apply {
-            fabSettings.setOnClickListener {
-                val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.BottomSheetTheme)
-                val sheetView = layoutInflater.inflate(R.layout.custom_settings_layout, it.findViewById(R.id.bottomsheet_settings_layout))
-                sheetView.apply {
-                    val settingsAdapter = SettingsAdapter(_viewModel.settingList.toList())
-                    findViewById<RecyclerView>(R.id.recycler_settings).adapter = settingsAdapter
-                    findViewById<Button>(R.id.button_save).setOnClickListener {
-                        _viewModel.saveSettings(settingsAdapter.getList())
-                        bottomSheetDialog.dismiss()
-                    }
-                }
-                bottomSheetDialog.setOnDismissListener {
-                    Toast.makeText(requireContext(), "dismissed", Toast.LENGTH_SHORT).show()
-                }
-                bottomSheetDialog.setContentView(sheetView)
-                bottomSheetDialog.show()
-            }
-
-            leftHalf.setOnTouchListener { v, event ->
-                when(event.action){
-                    MotionEvent.ACTION_DOWN -> {
-                        initialY = event.y
-                        true
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        val deltaY = event.y - initialY
-                        Log.d("test", "Initial: $initialY and final ${event.y} and delta: $deltaY")
-                        if (initialY>=100f && dragThreshold<deltaY){
-                            _viewModel.decrementTeam1()
-                        } else if (initialY==event.y){
-                            _viewModel.addPointTeam1()
-                        }
-                        initialY=0f
-                        true
-                    }
-                    else -> false
-                }
-            }
-            rightHalf.setOnTouchListener { _, event ->
-                when(event.action){
-                    MotionEvent.ACTION_DOWN -> {
-                        initialY = event.y
-                        true
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        val deltaY = event.y - initialY
-                        Log.d("test", "Initial: $initialY and final ${event.y} and delta: $deltaY")
-                        if (initialY>=100f && dragThreshold<deltaY){
-                            _viewModel.decrementTeam2()
-                        } else if (initialY==event.y){
-                            _viewModel.addPointTeam2()
-                        }
-                        initialY=0f
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }
         return _binding.root
     }
 
-    override fun onSaveClick(settingList: List<Setting>) {
-        _viewModel.saveSettings(settingList)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initListeners()
+        if (_viewModel.showAdvertisement) initAds()
+    }
+
+    private fun initLayout() {
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        ViewCompat.setOnApplyWindowInsetsListener(_binding.textviewHomeTitle) { v, insets ->
+            val orientation = requireContext().resources.configuration.orientation
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                val bars = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+                v.updatePadding(
+                    left = bars.left,
+                    top = bars.top,
+                    right = bars.right,
+                    bottom = bars.bottom
+                )
+            }
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initListeners() {
+        _binding.apply {
+            leftHalf.setOnTouchListener { _, event ->
+                handleTouch(event,
+                    onDecrement = { _viewModel.decrementTeam1() },
+                    onIncrement = { _viewModel.addPointTeam1() }
+                )
+            }
+
+            rightHalf.setOnTouchListener { _, event ->
+                handleTouch(event,
+                    onDecrement = { _viewModel.decrementTeam2() },
+                    onIncrement = { _viewModel.addPointTeam2() }
+                )
+            }
+
+            fabReload.setOnClickListener {
+                if (_viewModel.showAdvertisement) showAdvertisement()
+                _viewModel.restartCounters()
+            }
+
+            fabSettings.setOnClickListener {
+                val bottomSheetDialog =
+                    BottomSheetDialog(requireContext(), R.style.BottomSheetTheme)
+                val bottomSheetLayout = CustomSettingsLayoutBinding.inflate(layoutInflater).apply {
+                    val settingList = _viewModel.settingList.map { setting -> setting.copy() }
+                    val settingsAdapter = SettingsAdapter()
+                    recyclerSettings.adapter = settingsAdapter
+                    settingsAdapter.submitList(settingList)
+                    buttonSave.setOnClickListener {
+                        _viewModel.saveSettings(settingsAdapter.currentList)
+                        bottomSheetDialog.dismiss()
+                    }
+                }
+                bottomSheetDialog.apply {
+                    setContentView(bottomSheetLayout.root)
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                }.show()
+            }
+        }
+
+        _viewModel.finishingGame.observe(viewLifecycleOwner) { finishingGame ->
+            if (finishingGame) showFinalScoreDialog()
+        }
+    }
+
+    private fun showFinalScoreDialog() {
+        val binding = DialogFinalScoreBinding.inflate(layoutInflater)
+        val dialog = Dialog(requireContext()).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setCancelable(false)
+            setContentView(binding.root)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+        binding.apply {
+            textviewHomeLabel.text = requireContext().getString(R.string.home)
+            textviewHomeScore.text = _viewModel.counterTeam1.value.toString()
+            textviewGuestLabel.text = requireContext().getString(R.string.guest)
+            textviewGuestScore.text = _viewModel.counterTeam2.value.toString()
+
+            buttonNewGame.setOnClickListener {
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun handleTouch(
+        event: MotionEvent,
+        onDecrement: () -> Unit,
+        onIncrement: () -> Unit
+    ): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                _initialY = event.y
+                return true
+            }
+
+            MotionEvent.ACTION_UP -> {
+                val deltaY = event.y - _initialY
+                if (_initialY >= 100f && _dragThreshold < deltaY) {
+                    onDecrement()
+                } else if (_initialY == event.y) {
+                    onIncrement()
+                }
+                DebugUtils.reportDebug("Initial: $_initialY and final ${event.y} and delta: $deltaY")
+                _initialY = 0f
+                return true
+            }
+
+            else -> return false
+        }
+    }
+
+    private fun initAds() {
+        MobileAds.initialize(requireContext())
+        loadAdvertisement()
+    }
+
+    private fun loadAdvertisement() {
+        DebugUtils.reportDebug("Loading Advertisement")
+        val adRequest = AdRequest.Builder().build()
+        val interstitialAdLoadCallback = object : InterstitialAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                _interstitialAd = null
+            }
+
+            override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                _interstitialAd = interstitialAd
+            }
+        }
+
+        InterstitialAd.load(
+            requireContext(),
+            BuildConfig.INTERSTITIAL_AD_UNIT_ID,
+            adRequest,
+            interstitialAdLoadCallback
+        )
+    }
+
+    private fun showAdvertisement() {
+        _interstitialAd?.show(requireActivity())
+            ?: DebugUtils.reportDebug("Advertisement not loaded")
+        loadAdvertisement()
     }
 }
