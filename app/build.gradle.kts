@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.scoreboardbrlk"
+    namespace = "com.bgbrlk.scoreboardbrlk"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.scoreboardbrlk"
+        applicationId = "com.bgbrlk.scoreboardbrlk"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -19,10 +19,36 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(findProperty("RELEASE_STORE_FILE") ?: throw GradleException("RELEASE_STORE_FILE not defined"))
+            storePassword = findProperty("RELEASE_STORE_PASSWORD")?.toString() ?: throw GradleException("RELEASE_STORE_PASSWORD not defined")
+            keyAlias = findProperty("RELEASE_KEY_ALIAS")?.toString() ?: throw GradleException("RELEASE_KEY_ALIAS not defined")
+            keyPassword = findProperty("RELEASE_KEY_PASSWORD")?.toString() ?: throw GradleException("RELEASE_KEY_PASSWORD not defined")
+        }
+
+        val debugSigningConfig = signingConfigs.findByName("debug") ?: create("debug")
+
+        // Set the properties for the signing configuration
+        debugSigningConfig.apply {
+            storeFile = file(findProperty("DEBUG_STORE_FILE") ?: throw GradleException("DEBUG_STORE_FILE not defined"))
+            storePassword = findProperty("DEBUG_STORE_PASSWORD")?.toString() ?: throw GradleException("DEBUG_STORE_PASSWORD not defined")
+            keyAlias = findProperty("DEBUG_KEY_ALIAS")?.toString() ?: throw GradleException("DEBUG_KEY_ALIAS not defined")
+            keyPassword = findProperty("DEBUG_KEY_PASSWORD")?.toString() ?: throw GradleException("DEBUG_KEY_PASSWORD not defined")
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
+        }
+
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {

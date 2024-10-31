@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Scoreboard</string>
+    <string name="app_name">Scoreboard Lite</string>
     <string name="home">Home</string>
     <string name="guest">Guest</string>
     <string name="reset_button_description">Restart Counter</string>
