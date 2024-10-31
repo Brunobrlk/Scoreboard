@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.bgbrlk.scoreboardbrlk"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.bgbrlk.scoreboardbrlk"
@@ -45,6 +45,7 @@ android {
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
+            ndk.debugSymbolLevel = "SYMBOL_TABLE"
         }
 
         debug {

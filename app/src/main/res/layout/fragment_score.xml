@@ -6,7 +6,7 @@
     <data>
         <variable
             name="scoreViewModel"
-            type="com.example.bgbrlk.ui.score.ScoreViewModel" />
+            type="com.bgbrlk.scoreboardbrlk.ui.score.ScoreViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
