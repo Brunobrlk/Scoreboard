@@ -32,9 +32,12 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
         get() = _counterTeam2
 
     private val _pointsToWin = MutableLiveData(15)
+
     private val _pointsOnTap = MutableLiveData(1)
     private var _releaseAccess = 0
     var showAdvertisement = true
+    val isLongGame: Boolean
+        get() = (_counterTeam1.value?:0) + (_counterTeam2.value?:0) >= (_pointsToWin.value?:10)*1.5
 
     init {
         viewModelScope.launch {
@@ -50,6 +53,7 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
     }
 
     fun addPointTeam1() {
+        DebugUtils.reportDebug("Adding point to team 1. IsLongGame: $isLongGame")
         _counterTeam1.value = _counterTeam1.value?.plus(_pointsOnTap.value!!)
         if ((_counterTeam1.value ?: 0) >= _pointsToWin.value!!) {
             finishGame()
@@ -57,6 +61,7 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
     }
 
     fun addPointTeam2() {
+        DebugUtils.reportDebug("Adding point to team 2. IsLongGame: $isLongGame")
         _counterTeam2.value = _counterTeam2.value?.plus(_pointsOnTap.value!!)
         if ((_counterTeam2.value ?: 0) >= _pointsToWin.value!!) {
             finishGame()
@@ -65,7 +70,6 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
 
     private fun finishGame() {
         triggerFinalScoreDialog()
-        restartCounters()
     }
 
     private fun triggerFinalScoreDialog() {

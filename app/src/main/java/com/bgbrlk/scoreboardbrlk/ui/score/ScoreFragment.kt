@@ -148,6 +148,8 @@ class ScoreFragment : Fragment() {
             textviewGuestScore.text = _viewModel.counterTeam2.value.toString()
 
             buttonNewGame.setOnClickListener {
+                if (_viewModel.showAdvertisement && _viewModel.isLongGame) showAdvertisement()
+                _viewModel.restartCounters()
                 dialog.dismiss()
             }
         }
