@@ -2,16 +2,18 @@
     <string name="app_name">Scoreboard Lite</string>
     <string name="home">Home</string>
     <string name="guest">Guest</string>
+    <string name="new_game">New Game</string>
+    <string name="match_score">Match Score</string>
+    <string name="vs_label" translatable="false">vs</string>
+    <string name="reset_score_description">Reset Score</string>
+    <string name="flip_score_description">Flip Score</string>
+    <string name="settings_icon_description">Settings</string>
     <string name="reset_button_description">Restart Counter</string>
     <string name="flip_counter_description">Flip Counter</string>
     <string name="settings_description">Settings</string>
     <string name="save_description">Save</string>
-    <string name="new_game">New Game</string>
-    <string name="match_score">Match Score</string>
-    <string name="reset_score_description">Reset Score</string>
-    <string name="flip_score_description">Flip Score</string>
-    <string name="settings_icon_description">Settings Icon</string>
-    <string name="increase_value_button_description">Increase value button</string>
-    <string name="decrease_value_button_description">Decrease value button</string>
-    <string name="vs_label" translatable="false">vs</string>
+    <string name="increase_value_button_description">Increase value</string>
+    <string name="decrease_value_button_description">Decrease value</string>
+    <string name="touch_area_home_team_description">Add points to Home Team</string>
+    <string name="touch_area_guest_team_description">Add points to Guest Team</string>
 </resources>

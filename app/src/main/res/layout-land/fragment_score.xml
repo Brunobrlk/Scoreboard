@@ -19,6 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/light_blue"
+            android:contentDescription="@string/touch_area_home_team_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/right_half"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,6 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="#FF7043"
+            android:contentDescription="@string/touch_area_guest_team_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/left_half"
@@ -120,7 +122,7 @@
             android:backgroundTint="@color/white"
             android:contentDescription="@string/settings_description"
             android:src="@drawable/ic_settings"
-            app:fabSize="mini"
+            app:fabSize="normal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
