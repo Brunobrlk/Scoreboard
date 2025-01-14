@@ -1,33 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="CustomBigTextStyle">
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
-        <item name="android:padding">0dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:includeFontPadding">false</item>
+
+    <style name="Widget.App.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
     </style>
-    <style name="CustomTeamTextStyle" parent="CustomBigTextStyle">
-        <item name="android:textSize">32sp</item>
-        <item name="android:layout_marginTop">8dp</item>
+
+    <style name="Widget.App.FloatingActionButton.Small" parent="Widget.Material3.FloatingActionButton.Small.Primary">
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
     </style>
-    <style name="CustomScoreTextStyle" parent="CustomBigTextStyle">
-        <item name="android:autoSizeTextType">uniform</item>
-        <item name="android:autoSizeMinTextSize">350sp</item>
-        <item name="android:autoSizeMaxTextSize">1000sp</item>
-        <item name="android:autoSizeStepGranularity">2sp</item>
-        <item name="android:layout_marginHorizontal">16dp</item>
-        <item name="android:layout_marginTop">16dp</item>
-    </style>
-    <style name="CustomTitleTextStyle" parent="CustomBigTextStyle">
-        <item name="android:textSize">32sp</item>
-        <item name="android:textColor">@color/black</item>
-    </style>
-    <style name="BottomSheetTheme" parent="Theme.Design.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
-    </style>
-    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@android:color/transparent</item>
-    </style>
+
 </resources>

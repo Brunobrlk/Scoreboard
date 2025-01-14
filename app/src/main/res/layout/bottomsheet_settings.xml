@@ -3,22 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomsheet_settings_layout"
-        android:background="@drawable/custom_bottomsheet_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/textView"
-            style="@style/CustomTitleTextStyle"
+            android:id="@+id/textview_settings_headline"
+            style="?attr/textAppearanceHeadlineMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/settings_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,26 +23,25 @@
             android:id="@+id/recycler_settings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="8dp"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/textview_settings_headline"
+            app:spanCount="2"
             tools:listitem="@layout/item_settings" />
 
         <Button
+            style="@style/Widget.Material3.Button.TonalButton"
             android:id="@+id/button_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginVertical="16dp"
             android:text="@string/save_description"
-            android:paddingHorizontal="48dp"
-            android:background="@drawable/button_background"
-            android:layout_marginVertical="8dp"
+            android:textColor="?colorOnPrimary"
+            android:backgroundTint="?colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

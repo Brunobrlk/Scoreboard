@@ -3,111 +3,77 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="scoreViewModel"
+            type="com.bgbrlk.scoreboardbrlk.ui.score.ScoreViewModel" />
     </data>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/dialog_background"
         android:gravity="center"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
-        <!-- Title -->
-        <TextView
-            android:id="@+id/dialog_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="16dp"
-            android:text="@string/match_score"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <!-- Score Display (Team 1 vs Team 2) -->
+        <!-- Team 1 Score -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <!-- Team 1 Score -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <!-- Team 1 Name -->
-                <TextView
-                    android:id="@+id/textview_home_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/home"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/textview_home_score"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="36sp"
-                    android:textStyle="bold"
-                    tools:text="0" />
-            </LinearLayout>
-
-            <!-- "vs" Text -->
+            android:orientation="vertical">
+            <!-- Team 1 Name -->
             <TextView
-                android:id="@+id/textview_vs_label"
+                android:id="@+id/textview_home_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="@string/vs_label"
-                android:textColor="@android:color/white"
-                android:textSize="20sp" />
+                android:text="@string/home"
+                android:textSize="18sp" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/textview_home_score"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <!-- Team 2 Score -->
-
-                <!-- Team 2 Name -->
-                <TextView
-                    android:id="@+id/textview_guest_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/guest"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/textview_guest_score"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="36sp"
-                    android:textStyle="bold"
-                    tools:text="0" />
-            </LinearLayout>
-
+                android:textAlignment="center"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:text="@{ String.valueOf(scoreViewModel.counterTeam1) }"
+                tools:text="0" />
         </LinearLayout>
 
-        <!-- Close Button -->
-        <Button
-            android:id="@+id/button_new_game"
+        <!-- "vs" Text -->
+        <TextView
+            android:id="@+id/textview_vs_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:backgroundTint="@color/colorAccent"
-            android:padding="8dp"
-            android:text="@string/new_game"
-            android:textColor="@android:color/white" />
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/vs_label"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- Team 2 Score -->
+
+            <!-- Team 2 Name -->
+            <TextView
+                android:id="@+id/textview_guest_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/guest"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textview_guest_score"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:text="@{ String.valueOf(scoreViewModel.counterTeam2) }"
+                tools:text="0" />
+        </LinearLayout>
+
     </LinearLayout>
 </layout>

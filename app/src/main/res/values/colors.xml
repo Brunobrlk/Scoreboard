@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="light_blue">#2196F3</color>
-    <color name="colorPrimaryDark">#1E88E5</color> <!-- Blue -->
-    <color name="colorAccent">#FF9800</color> <!-- Orange -->
+
+    <color name="smoky_black">#0A0903</color>
+    <color name="snow">#FBF5F3</color>
+    <color name="blue">#0070cc</color>
+    <color name="indigo">#440381</color>
+    <color name="rosewood">#6B0F1A</color>
+    <color name="claret">#820933</color>
+    <color name="crismon">#D72638</color>
+    <color name="dark_spring_green">#337357</color>
+    <color name="russian_violet">#23022E</color>
+    <color name="eminence">#55286F</color>
+    <color name="lapis_lazuli">#1B65A2</color>
+
 </resources>

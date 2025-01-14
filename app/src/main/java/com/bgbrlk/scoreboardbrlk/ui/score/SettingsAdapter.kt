@@ -15,20 +15,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SettingsAdapter: ListAdapter<Setting, SettingsViewHolder>(SettingDiffCallback) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SettingsViewHolder.from(parent)
-    override fun onBindViewHolder(holder: SettingsViewHolder, position: Int) = holder.bind(getItem(position))
-}
-
-object SettingDiffCallback : DiffUtil.ItemCallback<Setting>(){
-    override fun areItemsTheSame(oldItem: Setting, newItem: Setting) = oldItem.name == newItem.name
-    override fun areContentsTheSame(oldItem: Setting, newItem: Setting) = oldItem == newItem
-}
-
 class SettingsViewHolder private constructor(private val _binding: ItemSettingsBinding) : RecyclerView.ViewHolder(_binding.root){
     private var scope = CoroutineScope(Dispatchers.Main)
     private val delay = 50L
-
     @SuppressLint("ClickableViewAccessibility")
     fun bind(item: Setting) {
         _binding.apply {
@@ -76,4 +65,15 @@ class SettingsViewHolder private constructor(private val _binding: ItemSettingsB
             return SettingsViewHolder(binding)
         }
     }
+
+}
+
+class SettingsAdapter: ListAdapter<Setting, SettingsViewHolder>(SettingDiffCallback) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SettingsViewHolder.from(parent)
+    override fun onBindViewHolder(holder: SettingsViewHolder, position: Int) = holder.bind(getItem(position))
+}
+
+object SettingDiffCallback : DiffUtil.ItemCallback<Setting>(){
+    override fun areItemsTheSame(oldItem: Setting, newItem: Setting) = oldItem.name == newItem.name
+    override fun areContentsTheSame(oldItem: Setting, newItem: Setting) = oldItem == newItem
 }

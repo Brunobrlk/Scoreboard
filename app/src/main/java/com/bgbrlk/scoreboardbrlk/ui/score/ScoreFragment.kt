@@ -1,17 +1,13 @@
 package com.bgbrlk.scoreboardbrlk.ui.score
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -20,7 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bgbrlk.scoreboardbrlk.BuildConfig
 import com.bgbrlk.scoreboardbrlk.R
-import com.bgbrlk.scoreboardbrlk.databinding.CustomSettingsLayoutBinding
+import com.bgbrlk.scoreboardbrlk.databinding.BottomsheetSettingsBinding
 import com.bgbrlk.scoreboardbrlk.databinding.DialogFinalScoreBinding
 import com.bgbrlk.scoreboardbrlk.databinding.FragmentScoreBinding
 import com.bgbrlk.scoreboardbrlk.helpers.DebugUtils
@@ -31,6 +27,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -88,14 +85,14 @@ class ScoreFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
         _binding.apply {
-            leftHalf.setOnTouchListener { _, event ->
+            viewLeftHalf.setOnTouchListener { _, event ->
                 handleTouch(event,
                     onDecrement = { _viewModel.decrementTeam1() },
                     onIncrement = { _viewModel.addPointTeam1() }
                 )
             }
 
-            rightHalf.setOnTouchListener { _, event ->
+            viewRightHalf.setOnTouchListener { _, event ->
                 handleTouch(event,
                     onDecrement = { _viewModel.decrementTeam2() },
                     onIncrement = { _viewModel.addPointTeam2() }
@@ -108,20 +105,20 @@ class ScoreFragment : Fragment() {
             }
 
             fabSettings.setOnClickListener {
-                val bottomSheetDialog =
-                    BottomSheetDialog(requireContext(), R.style.BottomSheetTheme)
-                val bottomSheetLayout = CustomSettingsLayoutBinding.inflate(layoutInflater).apply {
+                val bottomSheetDialog = BottomSheetDialog(requireContext())
+                val bottomSheetBinding = BottomsheetSettingsBinding.inflate(layoutInflater).apply {
                     val settingList = _viewModel.settingList.map { setting -> setting.copy() }
                     val settingsAdapter = SettingsAdapter()
                     recyclerSettings.adapter = settingsAdapter
-                    settingsAdapter.submitList(settingList)
                     buttonSave.setOnClickListener {
                         _viewModel.saveSettings(settingsAdapter.currentList)
                         bottomSheetDialog.dismiss()
                     }
+
+                    settingsAdapter.submitList(settingList)
                 }
                 bottomSheetDialog.apply {
-                    setContentView(bottomSheetLayout.root)
+                    setContentView(bottomSheetBinding.root)
                     behavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }.show()
             }
@@ -134,27 +131,16 @@ class ScoreFragment : Fragment() {
 
     private fun showFinalScoreDialog() {
         val binding = DialogFinalScoreBinding.inflate(layoutInflater)
-        val dialog = Dialog(requireContext()).apply {
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setCancelable(false)
-            setContentView(binding.root)
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
-
-        binding.apply {
-            textviewHomeLabel.text = requireContext().getString(R.string.home)
-            textviewHomeScore.text = _viewModel.counterTeam1.value.toString()
-            textviewGuestLabel.text = requireContext().getString(R.string.guest)
-            textviewGuestScore.text = _viewModel.counterTeam2.value.toString()
-
-            buttonNewGame.setOnClickListener {
+        MaterialAlertDialogBuilder(requireContext(), com.google.android.material.R.style.ThemeOverlay_Material3_MaterialAlertDialog_Centered)
+            .setTitle("Match Score")
+            .setCancelable(false)
+            .setView(binding.root)
+            .setNeutralButton(R.string.new_game){ dialog, _ ->
                 if (_viewModel.showAdvertisement && _viewModel.isLongGame) showAdvertisement()
                 _viewModel.restartCounters()
                 dialog.dismiss()
             }
-        }
-
-        dialog.show()
+            .show()
     }
 
     private fun handleTouch(

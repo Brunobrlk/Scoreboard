@@ -46,8 +46,8 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
             showAdvertisement = appDatastoreRepository.getBoolean(DatastoreKeys.SHOW_ADVERTISEMENT) ?: true
 
             _settingList = arrayListOf(
-                Setting("Points to Win", R.drawable.crown_icon, _pointsToWin.value!!),
-                Setting("Points on Tap", R.drawable.plus_icon, _pointsOnTap.value!!),
+                Setting("Points to Win", R.drawable.ic_crown, _pointsToWin.value!!),
+                Setting("Points on Tap", R.drawable.ic_plus, _pointsOnTap.value!!),
             )
         }
     }

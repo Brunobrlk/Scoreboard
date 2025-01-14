@@ -1,4 +1,27 @@
 <resources>
-    <style name="Theme.Fullscreen" parent="Theme.AppCompat.Light.NoActionBar">
+
+    <style name="Base.Theme.Scoreboard" parent="Theme.Material3.DayNight.NoActionBar">
     </style>
+
+    <style name="Theme.Scoreboard" parent="Base.Theme.Scoreboard">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorOnPrimary">@color/snow</item>
+
+        <item name="colorSecondary">@color/eminence</item>
+        <item name="colorOnSecondary">@color/snow</item>
+
+        <item name="colorPrimaryContainer">@color/snow</item>
+        <item name="colorOnPrimaryContainer">@color/smoky_black</item>
+
+        <item name="floatingActionButtonStyle">@style/Widget.App.FloatingActionButton.Small</item>
+
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.App.DisplaySmall</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.App.DisplayLarge</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.App.HeadlineLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.App.TitleMedium</item>
+    </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+    </style>
+
 </resources>

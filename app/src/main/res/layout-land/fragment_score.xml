@@ -14,99 +14,100 @@
         android:layout_height="match_parent">
 
         <View
-            android:id="@+id/left_half"
+            android:id="@+id/view_left_half"
             android:onClick="@{() -> scoreViewModel.addPointTeam1() }"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@color/light_blue"
+            android:background="?attr/colorPrimary"
             android:contentDescription="@string/touch_area_home_team_description"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/right_half"
+            app:layout_constraintEnd_toStartOf="@+id/view_right_half"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/right_half"
+            android:id="@+id/view_right_half"
             android:onClick="@{() -> scoreViewModel.addPointTeam2() }"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="#FF7043"
             android:contentDescription="@string/touch_area_guest_team_description"
+            android:background="?attr/colorSecondary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/left_half"
+            app:layout_constraintStart_toEndOf="@id/view_left_half"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/textview_home_title"
-            android:text="@string/home"
+            style="?attr/textAppearanceDisplaySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/CustomTeamTextStyle"
-            app:layout_constraintEnd_toStartOf="@id/right_half"
+            android:layout_marginTop="8dp"
+            android:text="@string/home"
+            app:layout_constraintEnd_toStartOf="@id/view_right_half"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textview_counter_team1"
-            style="@style/CustomScoreTextStyle"
+            style="?attr/textAppearanceDisplayLarge"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:text="@{ String.valueOf(scoreViewModel.counterTeam1) }"
-            app:layout_constraintBottom_toBottomOf="@+id/left_half"
-            app:layout_constraintEnd_toEndOf="@+id/left_half"
-            app:layout_constraintStart_toStartOf="@+id/left_half"
+            app:layout_constraintBottom_toBottomOf="@+id/view_left_half"
+            app:layout_constraintEnd_toEndOf="@+id/view_left_half"
+            app:layout_constraintStart_toStartOf="@+id/view_left_half"
             app:layout_constraintTop_toTopOf="@+id/textview_home_title"
             tools:text="10" />
 
         <TextView
             android:id="@+id/textview_guest_title"
-            android:text="@string/guest"
+            style="?attr/textAppearanceDisplaySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/CustomTeamTextStyle"
+            android:layout_marginTop="8dp"
+            android:text="@string/guest"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/left_half"
+            app:layout_constraintStart_toEndOf="@id/view_left_half"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textview_counter_team2"
-            style="@style/CustomScoreTextStyle"
+            style="?attr/textAppearanceDisplayLarge"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:text="@{ String.valueOf(scoreViewModel.counterTeam2) }"
-            app:layout_constraintBottom_toBottomOf="@id/right_half"
-            app:layout_constraintEnd_toEndOf="@+id/right_half"
-            app:layout_constraintStart_toEndOf="@+id/left_half"
+            app:layout_constraintBottom_toBottomOf="@id/view_right_half"
+            app:layout_constraintEnd_toEndOf="@+id/view_right_half"
+            app:layout_constraintStart_toEndOf="@+id/view_left_half"
             app:layout_constraintTop_toTopOf="@+id/textview_guest_title"
             tools:text="23" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            style="@style/Widget.App.FloatingActionButton"
             android:id="@+id/fab_reload"
             android:src="@drawable/ic_refresh"
             android:contentDescription="@string/reset_score_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:backgroundTint="@color/white"
-            app:fabSize="normal"
+            android:backgroundTint="?attr/colorOnPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/fab_flip" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            style="@style/Widget.App.FloatingActionButton"
             android:id="@+id/fab_flip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:backgroundTint="@color/white"
             android:onClick="@{() -> scoreViewModel.flipCounters() }"
             android:src="@drawable/ic_flip"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/flip_score_description"
-            app:fabSize="normal"
             app:layout_constraintBottom_toTopOf="@id/fab_reload"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -119,10 +120,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:backgroundTint="@color/white"
             android:contentDescription="@string/settings_description"
             android:src="@drawable/ic_settings"
-            app:fabSize="normal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

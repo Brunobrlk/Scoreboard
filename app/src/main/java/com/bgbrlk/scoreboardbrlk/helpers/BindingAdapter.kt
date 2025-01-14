@@ -1,4 +1,4 @@
-package com.bgbrlk.scoreboardbrlk.ui.score
+package com.bgbrlk.scoreboardbrlk.helpers
 
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
