@@ -4,4 +4,6 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
     alias(libs.plugins.org.jetbrains.kotlin.kapt) apply false
     alias(libs.plugins.googleDaggerHilt) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.crashlytics) apply false
 }

@@ -24,4 +24,11 @@
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
     </style>
 
+    <style name="ThemeOverlay.App.FullWidthActionsDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog.Centered">
+        <item name="materialAlertDialogButtonSpacerVisibility">2</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.Button.Dialog.FullWidth</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Button.Dialog.FullWidth</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.App.Button.Dialog.FullWidth</item>
+    </style>
+
 </resources>

@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.org.jetbrains.kotlin.kapt)
     alias(libs.plugins.googleDaggerHilt)
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.crashlytics)
 }
 
 android {
@@ -75,6 +77,13 @@ dependencies {
 
     // Ads
     implementation(libs.play.services.ads)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.perf)
+    implementation(libs.firebase.config)
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)

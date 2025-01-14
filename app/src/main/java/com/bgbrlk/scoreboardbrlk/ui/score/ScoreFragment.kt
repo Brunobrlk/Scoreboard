@@ -125,22 +125,43 @@ class ScoreFragment : Fragment() {
         }
 
         _viewModel.finishingGame.observe(viewLifecycleOwner) { finishingGame ->
-            if (finishingGame) showFinalScoreDialog()
+            if (finishingGame) {
+                disableCounters()
+                showFinalScoreDialog()
+            }
+        }
+    }
+
+    private fun disableCounters() {
+        _binding.apply {
+            viewLeftHalf.isEnabled = false
+            viewRightHalf.isEnabled = false
         }
     }
 
     private fun showFinalScoreDialog() {
-        val binding = DialogFinalScoreBinding.inflate(layoutInflater)
-        MaterialAlertDialogBuilder(requireContext(), com.google.android.material.R.style.ThemeOverlay_Material3_MaterialAlertDialog_Centered)
-            .setTitle("Match Score")
+        val binding = DialogFinalScoreBinding.inflate(layoutInflater).apply {
+            scoreViewModel = _viewModel
+        }
+        MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_App_FullWidthActionsDialog)
+            .setTitle(R.string.match_score)
             .setCancelable(false)
             .setView(binding.root)
             .setNeutralButton(R.string.new_game){ dialog, _ ->
+                DebugUtils.reportDebug("${_viewModel.counterTeam1.value}")
                 if (_viewModel.showAdvertisement && _viewModel.isLongGame) showAdvertisement()
                 _viewModel.restartCounters()
+                enableCounters()
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun enableCounters() {
+        _binding.apply {
+            viewLeftHalf.isEnabled = true
+            viewRightHalf.isEnabled = true
+        }
     }
 
     private fun handleTouch(

@@ -8,5 +8,11 @@
     <style name="Widget.App.FloatingActionButton.Small" parent="Widget.Material3.FloatingActionButton.Small.Primary">
         <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
     </style>
+    <style name="Widget.App.Button.Dialog.FullWidth" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:maxWidth">@null</item>
+        <item name="android:textColor">?colorOnSurface</item>
+    </style>
 
 </resources>

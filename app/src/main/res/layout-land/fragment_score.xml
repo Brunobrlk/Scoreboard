@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="?attr/colorPrimary"
-            android:contentDescription="@string/touch_area_home_team_description"
+            android:contentDescription='@{@string/touch_area_home_team_description(scoreViewModel.counterTeam1)}'
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/view_right_half"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,8 +30,8 @@
             android:onClick="@{() -> scoreViewModel.addPointTeam2() }"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:contentDescription="@string/touch_area_guest_team_description"
             android:background="?attr/colorSecondary"
+            android:contentDescription='@{@string/touch_area_guest_team_description(scoreViewModel.counterTeam2)}'
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/view_left_half"
@@ -55,6 +55,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:text="@{ String.valueOf(scoreViewModel.counterTeam1) }"
+            android:contentDescription='@{@string/textview_home_team_description(scoreViewModel.counterTeam1)}'
             app:layout_constraintBottom_toBottomOf="@+id/view_left_half"
             app:layout_constraintEnd_toEndOf="@+id/view_left_half"
             app:layout_constraintStart_toStartOf="@+id/view_left_half"
@@ -78,6 +79,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:text="@{ String.valueOf(scoreViewModel.counterTeam2) }"
+            android:contentDescription='@{@string/textview_guest_team_description(scoreViewModel.counterTeam2)}'
             app:layout_constraintBottom_toBottomOf="@id/view_right_half"
             app:layout_constraintEnd_toEndOf="@+id/view_right_half"
             app:layout_constraintStart_toEndOf="@+id/view_left_half"
