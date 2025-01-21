@@ -78,6 +78,7 @@
             style="?attr/textAppearanceDisplayLarge"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:textSize="@dimen/min_score_size"
             android:text="@{ String.valueOf(scoreViewModel.counterTeam2) }"
             android:contentDescription='@{@string/textview_guest_team_description(scoreViewModel.counterTeam2)}'
             app:layout_constraintBottom_toBottomOf="@id/view_right_half"

@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
+import java.text.SimpleDateFormat
+import java.util.Date
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -16,9 +20,10 @@ android {
         applicationId = "com.bgbrlk.scoreboardbrlk"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.2"
+        versionCode = 7
+        versionName = "1.2.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        archivesName = getOutputName()
     }
 
     signingConfigs {
@@ -42,12 +47,11 @@ android {
 
     buildTypes {
         release {
-            isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
+            ndk.debugSymbolLevel = "FULL"
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
-            ndk.debugSymbolLevel = "SYMBOL_TABLE"
         }
 
         debug {
@@ -66,6 +70,8 @@ android {
         dataBinding = true
         buildConfig = true
     }
+
+    ndkVersion = "27.0.11718014 rc1"
 }
 
 dependencies {
@@ -103,4 +109,36 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+tasks.register<Zip>("zipSymbols") {
+    group = "build"
+    description = "Zips the merged native libs into symbols.zip."
+
+    val outputDir = file("${project.projectDir}/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib")
+    val baseName = getOutputName()
+    val symbolsZipName = "$baseName-symbols.zip"
+    val outputZip = file("${project.projectDir}/release/$symbolsZipName")
+
+    destinationDirectory.set(outputZip.parentFile)
+    archiveFileName.set(outputZip.name)
+
+    from(outputDir) {
+        include("**/*") // Include all files and directories under 'lib'
+    }
+}
+
+afterEvaluate{
+    tasks.named("bundleRelease").configure {
+        finalizedBy("zipSymbols")
+    }
+}
+
+fun getOutputName(): String {
+    val appName = "scoreboard"
+    val versionName = android.defaultConfig.versionName
+    val versionCode = android.defaultConfig.versionCode
+    val date = SimpleDateFormat("yyyy-MM-dd").format(Date())
+
+    return "${appName}_${date}_v${versionName}-${versionCode}"
 }
