@@ -5,6 +5,7 @@ build/
 # Local configuration file (sdk path, etc)
 local.properties
 screenshots/
+todo.md
 
 # Log/OS Files
 *.log

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="min_score_size">500sp</dimen>
+    <dimen name="max_score_size">290sp</dimen>
 </resources>
