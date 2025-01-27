@@ -98,6 +98,9 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
 
     private fun triggerFinalScoreDialog() {
         _finishingGame.value = true
+    }
+
+    fun gameFinished(){
         _finishingGame.value = false
     }
 

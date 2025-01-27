@@ -3,7 +3,6 @@
     <string name="app_name">Placar Lite</string>
     <string name="home">Casa</string>
     <string name="guest">Visitante</string>
-    <string name="reset_button_description">Reiniciar Pontuação</string>
     <string name="flip_counter_description">Inverter Pontuação</string>
     <string name="settings_description">Configurações</string>
     <string name="save_description">Salvar</string>

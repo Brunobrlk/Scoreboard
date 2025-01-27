@@ -15,11 +15,11 @@
 
         <View
             android:id="@+id/view_left_half"
-            android:onClick="@{() -> scoreViewModel.addPointTeam1() }"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="?attr/colorPrimary"
+            android:background="?colorPrimary"
             android:contentDescription='@{@string/touch_area_home_team_description(scoreViewModel.counterTeam1)}'
+            android:onClick="@{() -> scoreViewModel.addPointTeam1() }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/view_right_half"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,16 +27,15 @@
 
         <View
             android:id="@+id/view_right_half"
-            android:onClick="@{() -> scoreViewModel.addPointTeam2() }"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="?attr/colorSecondary"
+            android:background="?colorSecondary"
             android:contentDescription='@{@string/touch_area_guest_team_description(scoreViewModel.counterTeam2)}'
+            android:onClick="@{() -> scoreViewModel.addPointTeam2() }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/view_left_half"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/textview_home_title"
@@ -54,8 +53,8 @@
             style="?attr/textAppearanceDisplayLarge"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:text="@{ String.valueOf(scoreViewModel.counterTeam1) }"
             android:contentDescription='@{@string/textview_home_team_description(scoreViewModel.counterTeam1)}'
+            android:text="@{ String.valueOf(scoreViewModel.counterTeam1) }"
             app:layout_constraintBottom_toBottomOf="@+id/view_left_half"
             app:layout_constraintEnd_toEndOf="@+id/view_left_half"
             app:layout_constraintStart_toStartOf="@+id/view_left_half"
@@ -78,8 +77,8 @@
             style="?attr/textAppearanceDisplayLarge"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:text="@{ String.valueOf(scoreViewModel.counterTeam2) }"
             android:contentDescription='@{@string/textview_guest_team_description(scoreViewModel.counterTeam2)}'
+            android:text="@{ String.valueOf(scoreViewModel.counterTeam2) }"
             app:layout_constraintBottom_toBottomOf="@id/view_right_half"
             app:layout_constraintEnd_toEndOf="@+id/view_right_half"
             app:layout_constraintStart_toEndOf="@+id/view_left_half"
@@ -87,29 +86,29 @@
             tools:text="23" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            style="@style/Widget.App.FloatingActionButton"
             android:id="@+id/fab_reload"
-            android:src="@drawable/ic_refresh"
-            android:contentDescription="@string/reset_score_description"
+            style="@style/Widget.App.FloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:backgroundTint="?attr/colorOnPrimary"
+            android:contentDescription="@string/reset_score_description"
+            android:src="@drawable/ic_refresh"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/fab_flip" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            style="@style/Widget.App.FloatingActionButton"
             android:id="@+id/fab_flip"
+            style="@style/Widget.App.FloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:onClick="@{() -> scoreViewModel.flipCounters() }"
-            android:src="@drawable/ic_flip"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/flip_score_description"
+            android:onClick="@{() -> scoreViewModel.flipCounters() }"
+            android:src="@drawable/ic_flip"
             app:layout_constraintBottom_toTopOf="@id/fab_reload"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

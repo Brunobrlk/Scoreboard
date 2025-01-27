@@ -8,7 +8,6 @@
     <string name="reset_score_description">Reset Score</string>
     <string name="flip_score_description">Flip Score</string>
     <string name="settings_icon_description">Settings</string>
-    <string name="reset_button_description">Restart Counter</string>
     <string name="flip_counter_description">Flip Counter</string>
     <string name="settings_description">Settings</string>
     <string name="save_description">Save</string>

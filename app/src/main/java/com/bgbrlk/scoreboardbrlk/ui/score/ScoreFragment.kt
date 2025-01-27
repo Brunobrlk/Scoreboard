@@ -1,20 +1,20 @@
 package com.bgbrlk.scoreboardbrlk.ui.score
 
 import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bgbrlk.scoreboardbrlk.BuildConfig
 import com.bgbrlk.scoreboardbrlk.R
 import com.bgbrlk.scoreboardbrlk.databinding.BottomsheetSettingsBinding
@@ -35,6 +35,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class ScoreFragment : Fragment() {
     private lateinit var _binding: FragmentScoreBinding
     private val _viewModel: ScoreViewModel by viewModels()
+
+    private var _finalScoreDialog: AlertDialog? = null
     private var _interstitialAd: InterstitialAd? = null
 
     private val _dragThreshold = 200f
@@ -54,6 +56,7 @@ class ScoreFragment : Fragment() {
             scoreViewModel = _viewModel
             lifecycleOwner = viewLifecycleOwner
         }
+        DebugUtils.reportDebug("Hello from onCreateView")
 
         initLayout()
 
@@ -66,8 +69,12 @@ class ScoreFragment : Fragment() {
         if (_viewModel.showAdvertisement) initAds()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _finalScoreDialog?.dismiss()
+    }
+
     private fun initLayout() {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         ViewCompat.setOnApplyWindowInsetsListener(_binding.textviewHomeTitle) { v, insets ->
             val orientation = requireContext().resources.configuration.orientation
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -110,6 +117,9 @@ class ScoreFragment : Fragment() {
                 val bottomSheetBinding = BottomsheetSettingsBinding.inflate(layoutInflater).apply {
                     val settingList = _viewModel.settingList.map { setting -> setting.copy() }
                     val settingsAdapter = SettingsAdapter()
+                    val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                    val spanCount = if (isLandscape) 2 else 1
+                    recyclerSettings.layoutManager = GridLayoutManager(requireContext(), spanCount)
                     recyclerSettings.adapter = settingsAdapter
                     buttonSave.setOnClickListener {
                         _viewModel.saveSettings(settingsAdapter.currentList)
@@ -144,18 +154,17 @@ class ScoreFragment : Fragment() {
         val binding = DialogFinalScoreBinding.inflate(layoutInflater).apply {
             scoreViewModel = _viewModel
         }
-        MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_App_FullWidthActionsDialog)
+        _finalScoreDialog = MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_App_FullWidthActionsDialog)
             .setTitle(R.string.match_score)
             .setCancelable(false)
             .setView(binding.root)
             .setNeutralButton(R.string.new_game){ dialog, _ ->
-                DebugUtils.reportDebug("${_viewModel.counterTeam1.value}")
                 if (_viewModel.showAdvertisement && _viewModel.isLongGame) showAdvertisement()
                 _viewModel.restartCounters()
                 enableCounters()
+                _viewModel.gameFinished()
                 dialog.dismiss()
-            }
-            .show()
+            }.show()
     }
 
     private fun enableCounters() {
