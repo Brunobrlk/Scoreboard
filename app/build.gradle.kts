@@ -20,8 +20,8 @@ android {
         applicationId = "com.bgbrlk.scoreboardbrlk"
         minSdk = 26
         targetSdk = 35
-        versionCode = 7
-        versionName = "1.2.2"
+        versionCode = 8
+        versionName = "1.3.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         archivesName = getOutputName()
     }
@@ -33,31 +33,18 @@ android {
             keyAlias = findProperty("RELEASE_KEY_ALIAS")?.toString() ?: throw GradleException("RELEASE_KEY_ALIAS not defined")
             keyPassword = findProperty("RELEASE_KEY_PASSWORD")?.toString() ?: throw GradleException("RELEASE_KEY_PASSWORD not defined")
         }
-
-        val debugSigningConfig = signingConfigs.findByName("debug") ?: create("debug")
-
-        // Set the properties for the signing configuration
-        debugSigningConfig.apply {
-            storeFile = file(findProperty("DEBUG_STORE_FILE") ?: throw GradleException("DEBUG_STORE_FILE not defined"))
-            storePassword = findProperty("DEBUG_STORE_PASSWORD")?.toString() ?: throw GradleException("DEBUG_STORE_PASSWORD not defined")
-            keyAlias = findProperty("DEBUG_KEY_ALIAS")?.toString() ?: throw GradleException("DEBUG_KEY_ALIAS not defined")
-            keyPassword = findProperty("DEBUG_KEY_PASSWORD")?.toString() ?: throw GradleException("DEBUG_KEY_PASSWORD not defined")
-        }
     }
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             ndk.debugSymbolLevel = "FULL"
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
-        }
-
-        debug {
-            signingConfig = signingConfigs.getByName("debug")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

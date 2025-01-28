@@ -6,6 +6,7 @@ build/
 local.properties
 screenshots/
 todo.md
+notes.txt
 
 # Log/OS Files
 *.log
