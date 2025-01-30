@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
@@ -39,7 +40,7 @@ class ScoreFragment : Fragment() {
     private var _finalScoreDialog: AlertDialog? = null
     private var _interstitialAd: InterstitialAd? = null
 
-    private val _dragThreshold = 200f
+    private var _dragThreshold = 0f
     private var _initialY = 0f
 
     override fun onCreateView(
@@ -56,8 +57,6 @@ class ScoreFragment : Fragment() {
             scoreViewModel = _viewModel
             lifecycleOwner = viewLifecycleOwner
         }
-        DebugUtils.reportDebug("Hello from onCreateView")
-
         initLayout()
 
         return _binding.root
@@ -66,7 +65,6 @@ class ScoreFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
-        if (_viewModel.showAdvertisement) initAds()
     }
 
     override fun onDestroy() {
@@ -88,6 +86,7 @@ class ScoreFragment : Fragment() {
             }
             WindowInsetsCompat.CONSUMED
         }
+        _dragThreshold = ViewConfiguration.get(requireContext()).scaledVerticalScrollFactor
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -108,7 +107,7 @@ class ScoreFragment : Fragment() {
             }
 
             fabReload.setOnClickListener {
-                if (_viewModel.showAdvertisement) showAdvertisement()
+                if (_viewModel.showAds()) showAdvertisement()
                 _viewModel.restartCounters()
             }
 
@@ -141,6 +140,10 @@ class ScoreFragment : Fragment() {
                 showFinalScoreDialog()
             }
         }
+
+        _viewModel.showAdvertisement.observe(viewLifecycleOwner) { showAdvertisement ->
+            if (showAdvertisement) initAds()
+        }
     }
 
     private fun disableCounters() {
@@ -159,7 +162,7 @@ class ScoreFragment : Fragment() {
             .setCancelable(false)
             .setView(binding.root)
             .setNeutralButton(R.string.new_game){ dialog, _ ->
-                if (_viewModel.showAdvertisement && _viewModel.isLongGame) showAdvertisement()
+                if (_viewModel.showAds() && _viewModel.isLongGame) showAdvertisement()
                 _viewModel.restartCounters()
                 enableCounters()
                 _viewModel.gameFinished()
@@ -189,11 +192,10 @@ class ScoreFragment : Fragment() {
                 val deltaY = event.y - _initialY
                 if (_initialY >= 100f && _dragThreshold < deltaY) {
                     onDecrement()
-                } else if (_initialY == event.y) {
+                } else  {
                     onIncrement()
                 }
                 DebugUtils.reportDebug("Initial: $_initialY and final ${event.y} and delta: $deltaY")
-                _initialY = 0f
                 return true
             }
 

@@ -1,2 +1,4 @@
 /build
 /release/*.zip
+/release/baselineProfiles
+/release/output-metadata.json

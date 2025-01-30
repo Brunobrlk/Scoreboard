@@ -1,6 +1,5 @@
 package com.bgbrlk.scoreboardbrlk.ui.score
 
-import android.os.Debug
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -37,11 +36,14 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
     val counterTeam2: LiveData<Int>
         get() = _counterTeam2
 
-    private val _pointsToWin = MutableLiveData(15)
+    private val _showAdvertisement = MutableLiveData(false)
+    val showAdvertisement: LiveData<Boolean>
+        get() = _showAdvertisement
 
+    private val _pointsToWin = MutableLiveData(15)
     private val _pointsOnTap = MutableLiveData(1)
     private var _releaseAccess = 0
-    var showAdvertisement = true
+
     val isLongGame: Boolean
         get() = (_counterTeam1.value?:0) + (_counterTeam2.value?:0) >= (_pointsToWin.value?:10)*1.5
 
@@ -52,9 +54,7 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
 
             _pointsToWin.value = appDatastoreRepository.getInteger(DatastoreKeys.POINTS_TO_WIN) ?: 15
             _pointsOnTap.value = appDatastoreRepository.getInteger(DatastoreKeys.POINTS_ON_TAP) ?: 1
-            showAdvertisement = remoteConfShowAdvertisement && appDatastoreRepository.getBoolean(DatastoreKeys.SHOW_ADVERTISEMENT) ?: true
-
-            DebugUtils.reportDebug("Show Advertisement: $showAdvertisement")
+            _showAdvertisement.value = remoteConfShowAdvertisement && appDatastoreRepository.getBoolean(DatastoreKeys.SHOW_ADVERTISEMENT) ?: true
 
             _settingList = arrayListOf(
                 Setting(R.string.points_to_win, R.drawable.ic_crown, _pointsToWin.value!!),
@@ -77,7 +77,6 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
     }
 
     fun addPointTeam1() {
-        DebugUtils.reportDebug("Adding point to team 1. IsLongGame: $isLongGame")
         _counterTeam1.value = _counterTeam1.value?.plus(_pointsOnTap.value!!)
         if ((_counterTeam1.value ?: 0) >= _pointsToWin.value!!) {
             finishGame()
@@ -85,12 +84,13 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
     }
 
     fun addPointTeam2() {
-        DebugUtils.reportDebug("Adding point to team 2. IsLongGame: $isLongGame")
         _counterTeam2.value = _counterTeam2.value?.plus(_pointsOnTap.value!!)
         if ((_counterTeam2.value ?: 0) >= _pointsToWin.value!!) {
             finishGame()
         }
     }
+
+    fun showAds() = _showAdvertisement.value?:false
 
     private fun finishGame() {
         triggerFinalScoreDialog()
@@ -115,10 +115,10 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
     }
 
     private fun releaseAccess() {
-        showAdvertisement = false
+        _showAdvertisement.value = false
         DebugUtils.reportDebug("Access Released")
         viewModelScope.launch {
-            appDatastoreRepository.putBoolean(DatastoreKeys.SHOW_ADVERTISEMENT, showAdvertisement)
+            appDatastoreRepository.putBoolean(DatastoreKeys.SHOW_ADVERTISEMENT, showAds())
         }
     }
 
@@ -128,7 +128,7 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
     }
 
     fun flipCounters() {
-        if (_counterTeam1.value == 0 && _counterTeam2.value == 0 && showAdvertisement) {
+        if (_counterTeam1.value == 0 && _counterTeam2.value == 0 && showAds()) {
             _releaseAccess++
             DebugUtils.reportDebug("Access: $_releaseAccess")
             if (_releaseAccess == 10) {

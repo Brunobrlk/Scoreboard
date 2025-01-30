@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bgbrlk.scoreboardbrlk.R
 import com.bgbrlk.scoreboardbrlk.databinding.ItemSettingsBinding
 import com.bgbrlk.scoreboardbrlk.domain.Setting
 import kotlinx.coroutines.CoroutineScope
@@ -21,13 +20,12 @@ class SettingsViewHolder private constructor(private val _binding: ItemSettingsB
     private val delay = 50L
     @SuppressLint("ClickableViewAccessibility")
     fun bind(item: Setting) {
-        val context = _binding.root.context
         _binding.apply {
             imagebuttonMinus.setOnLongClickListener {
-                handleLongClick(this, item){ if(item.value > 0) item.value-- }
+                handleLongClick(this, item){ if(item.value > 1) item.value-- }
             }
             imagebuttonMinus.setOnTouchListener { _, event ->
-                handleTouch(event, this, item){ if(item.value > 0) item.value-- }
+                handleTouch(event, this, item){ if(item.value > 1) item.value-- }
             }
             imagebuttonPlus.setOnLongClickListener {
                 handleLongClick(this, item){ item.value++ }
