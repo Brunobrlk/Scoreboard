@@ -2,6 +2,12 @@
 .gradle/
 build/
 
+# App build & release files
+app/build
+app/release/*.zip
+app/release/baselineProfiles
+app/release/output-metadata.json
+
 # Local configuration file (sdk path, etc)
 local.properties
 screenshots/
