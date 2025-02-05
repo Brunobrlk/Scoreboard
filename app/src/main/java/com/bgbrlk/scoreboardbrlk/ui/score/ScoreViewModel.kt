@@ -11,6 +11,7 @@ import com.bgbrlk.scoreboardbrlk.helpers.DebugUtils
 import com.bgbrlk.scoreboardbrlk.helpers.RemoteConfigKeys
 import com.bgbrlk.scoreboardbrlk.repository.AppDatastoreInterface
 import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.firebase.remoteconfig.remoteConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,17 +50,17 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
 
     init {
         viewModelScope.launch {
-            val remoteConfShowAdvertisement = isAdsEnabled()
-            DebugUtils.reportDebug("Remote Config: $remoteConfShowAdvertisement")
-
             _pointsToWin.value = appDatastoreRepository.getInteger(DatastoreKeys.POINTS_TO_WIN) ?: 15
             _pointsOnTap.value = appDatastoreRepository.getInteger(DatastoreKeys.POINTS_ON_TAP) ?: 1
-            _showAdvertisement.value = remoteConfShowAdvertisement && appDatastoreRepository.getBoolean(DatastoreKeys.SHOW_ADVERTISEMENT) ?: true
 
             _settingList = arrayListOf(
                 Setting(R.string.points_to_win, R.drawable.ic_crown, _pointsToWin.value!!),
                 Setting(R.string.points_on_tap, R.drawable.ic_plus, _pointsOnTap.value!!),
             )
+
+            val remoteConfShowAdvertisement = isAdsEnabled()
+            DebugUtils.reportDebug("Remote Config: $remoteConfShowAdvertisement")
+            _showAdvertisement.value = remoteConfShowAdvertisement && appDatastoreRepository.getBoolean(DatastoreKeys.SHOW_ADVERTISEMENT) ?: true
         }
     }
 
@@ -71,7 +72,13 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
             setConfigSettingsAsync(configSettings)
         }
 
-        remoteConfig.fetchAndActivate().await()
+        try {
+            remoteConfig.fetchAndActivate().await()
+        } catch (e: FirebaseRemoteConfigException) {
+            DebugUtils.reportDebug("Remote Config Error: ${e.localizedMessage}")
+        } catch (e: Exception) {
+            DebugUtils.reportDebug("Unexpected Remote Config Error: ${e.localizedMessage}")
+        }
 
         return remoteConfig.getBoolean("showAdvertisement")
     }
