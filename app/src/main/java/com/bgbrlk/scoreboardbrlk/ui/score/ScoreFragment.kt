@@ -31,6 +31,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class ScoreFragment : Fragment() {
@@ -40,7 +41,9 @@ class ScoreFragment : Fragment() {
     private var _finalScoreDialog: AlertDialog? = null
     private var _interstitialAd: InterstitialAd? = null
 
+    private var _ignoreTopThreshold = 0f
     private var _dragThreshold = 0f
+    private var _tapThreshold = 0f
     private var _initialY = 0f
 
     override fun onCreateView(
@@ -87,7 +90,12 @@ class ScoreFragment : Fragment() {
             WindowInsetsCompat.CONSUMED
         }
         _dragThreshold = ViewConfiguration.get(requireContext()).scaledVerticalScrollFactor
+        _tapThreshold = ViewConfiguration.get(requireContext()).scaledTouchSlop.toFloat()
+        _ignoreTopThreshold = getFivePercentOfScreen()
+        DebugUtils.reportDebug("Tap: $_tapThreshold and Drag: $_dragThreshold")
     }
+
+    private fun getFivePercentOfScreen() = resources.displayMetrics.heightPixels.toFloat()*0.05f
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
@@ -190,9 +198,9 @@ class ScoreFragment : Fragment() {
 
             MotionEvent.ACTION_UP -> {
                 val deltaY = event.y - _initialY
-                if (_initialY >= 100f && _dragThreshold < deltaY) {
+                if (deltaY > _dragThreshold && _initialY > _ignoreTopThreshold) {
                     onDecrement()
-                } else  {
+                } else if(abs(deltaY) <= _tapThreshold){
                     onIncrement()
                 }
                 DebugUtils.reportDebug("Initial: $_initialY and final ${event.y} and delta: $deltaY")
