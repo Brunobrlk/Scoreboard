@@ -97,7 +97,7 @@ class ScoreFragment : Fragment() {
 
     private fun getFivePercentOfScreen() = resources.displayMetrics.heightPixels.toFloat()*0.05f
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     private fun initListeners() {
         _binding.apply {
             viewLeftHalf.setOnTouchListener { _, event ->
@@ -126,6 +126,7 @@ class ScoreFragment : Fragment() {
                     val settingsAdapter = SettingsAdapter()
                     val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
                     val spanCount = if (isLandscape) 2 else 1
+                    textviewVersion.text = "App Version: ${BuildConfig.VERSION_NAME}"
                     recyclerSettings.layoutManager = GridLayoutManager(requireContext(), spanCount)
                     recyclerSettings.adapter = settingsAdapter
                     buttonSave.setOnClickListener {

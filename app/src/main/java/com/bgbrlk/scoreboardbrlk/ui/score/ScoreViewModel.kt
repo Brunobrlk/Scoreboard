@@ -53,8 +53,8 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
             _pointsOnTap.value = appDatastoreRepository.getInteger(DatastoreKeys.POINTS_ON_TAP) ?: 1
 
             _settingList = arrayListOf(
-                Setting(R.string.points_to_win, R.drawable.ic_crown, _pointsToWin.value!!),
-                Setting(R.string.points_on_tap, R.drawable.ic_plus, _pointsOnTap.value!!),
+                Setting(R.string.points_to_win, R.drawable.ic_crown, _pointsToWin.value ?: 15),
+                Setting(R.string.points_on_tap, R.drawable.ic_plus, _pointsOnTap.value ?: 1),
             )
 
             val remoteConfShowAdvertisement = isAdsEnabled()
@@ -153,8 +153,10 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
     }
 
     private fun updateSettingValues(list: List<Setting>) {
-        _settingList = ArrayList(list)
-        _pointsToWin.value = list[0].value
-        _pointsOnTap.value = list[1].value
+        if(list.isNotEmpty() && list.size==2){
+            _settingList = ArrayList(list)
+            _pointsToWin.value = list[0].value
+            _pointsOnTap.value = list[1].value
+        }
     }
 }

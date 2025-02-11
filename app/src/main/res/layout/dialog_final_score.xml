@@ -1,69 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
     <data>
         <variable
             name="scoreViewModel"
             type="com.bgbrlk.scoreboardbrlk.ui.score.ScoreViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
         android:padding="8dp">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                style="?attr/textAppearanceHeadlineSmall"
-                android:id="@+id/textview_home_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/home"/>
-
-            <TextView
-                style="?attr/textAppearanceDisplayMedium"
-                android:id="@+id/textview_home_score"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:text="@{ String.valueOf(scoreViewModel.counterTeam1) }"
-                android:contentDescription='@{@string/textview_home_score(scoreViewModel.counterTeam1)}'
-                tools:text="0" />
-        </LinearLayout>
 
         <TextView
-            style="?attr/textAppearanceTitleLarge"
+            android:id="@+id/textview_home_label"
+            style="?attr/textAppearanceHeadlineSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/home"
+            app:layout_constraintEnd_toStartOf="@+id/textview_vs_label"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textview_home_score"
+            style="?attr/textAppearanceDisplayMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription='@{@string/textview_home_score(scoreViewModel.counterTeam1)}'
+            android:text="@{ String.valueOf(scoreViewModel.counterTeam1) }"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textview_home_label"
+            app:layout_constraintStart_toStartOf="@+id/textview_home_label"
+            app:layout_constraintTop_toBottomOf="@+id/textview_home_label"
+            tools:text="330" />
+
+        <TextView
             android:id="@+id/textview_vs_label"
+            style="?attr/textAppearanceTitleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
-            android:text="@string/vs_label" />
+            android:text="@string/vs_label"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textview_guest_label"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/textview_home_label"
+            app:layout_constraintTop_toTopOf="@+id/textview_guest_label" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/textview_guest_label"
+            style="?attr/textAppearanceHeadlineSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                style="?attr/textAppearanceHeadlineSmall"
-                android:id="@+id/textview_guest_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/guest"/>
-            <TextView
-                style="?attr/textAppearanceDisplayMedium"
-                android:id="@+id/textview_guest_score"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:contentDescription='@{@string/textview_guest_score(scoreViewModel.counterTeam1)}'
-                android:text="@{ String.valueOf(scoreViewModel.counterTeam2) }"
-                tools:text="0" />
-        </LinearLayout>
+            android:text="@string/guest"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/textview_vs_label"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/textview_guest_score"
+            style="?attr/textAppearanceDisplayMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription='@{@string/textview_guest_score(scoreViewModel.counterTeam1)}'
+            android:text="@{ String.valueOf(scoreViewModel.counterTeam2) }"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textview_guest_label"
+            app:layout_constraintStart_toStartOf="@+id/textview_guest_label"
+            app:layout_constraintTop_toBottomOf="@+id/textview_guest_label"
+            tools:text="330" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
