@@ -8,8 +8,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install gdown
-          command: pip install gdown
+          name: Install Python & gdown
+          command: |
+            sudo apt update
+            sudo apt install -y python3 python3-pip
+            pip3 install gdown
       - run:
           name: Download Keystore from Google Drive
           command: gdown "$GDRIVE_URL"
