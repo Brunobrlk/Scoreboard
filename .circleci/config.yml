@@ -8,6 +8,12 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install gdown
+          command: pip install gdown
+      - run:
+          name: Download Keystore from Google Drive
+          command: gdown "$GDRIVE_URL"
+      - run:
           name: Calculate cache key
           command: |-
             find . -name 'pom.xml' -o -name 'gradlew*' -o -name '*.gradle*' | \
