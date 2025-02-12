@@ -17,6 +17,9 @@ jobs:
           name: Download Keystore from Google Drive
           command: gdown "$GDRIVE_URL"
       - run:
+          name: Make setup_env.sh executable
+          command: chmod +x ./setup_env.sh
+      - run:
           name: Setup environment
           command: ./setup_env.sh
       - run:
