@@ -6,20 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bgbrlk.scoreboardbrlk.R
 import com.bgbrlk.scoreboardbrlk.domain.Setting
-import com.bgbrlk.scoreboardbrlk.helpers.DatastoreKeys
 import com.bgbrlk.scoreboardbrlk.helpers.DebugUtils
-import com.bgbrlk.scoreboardbrlk.helpers.RemoteConfigKeys
-import com.bgbrlk.scoreboardbrlk.repository.AppDatastoreInterface
-import com.google.firebase.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.google.firebase.remoteconfig.remoteConfig
+import com.bgbrlk.scoreboardbrlk.repository.AppRules
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
-class ScoreViewModel @Inject constructor(private val appDatastoreRepository: AppDatastoreInterface) : ViewModel() {
+class ScoreViewModel @Inject constructor(private val appRulesRepository: AppRules) : ViewModel() {
     private var _finishingGame = MutableLiveData<Boolean>()
     val finishingGame: LiveData<Boolean>
         get() = _finishingGame
@@ -49,35 +43,16 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
 
     init {
         viewModelScope.launch {
-            _pointsToWin.value = appDatastoreRepository.getInteger(DatastoreKeys.POINTS_TO_WIN) ?: 15
-            _pointsOnTap.value = appDatastoreRepository.getInteger(DatastoreKeys.POINTS_ON_TAP) ?: 1
+            _pointsToWin.value = appRulesRepository.getPointsToWin()
+            _pointsOnTap.value = appRulesRepository.getPointsOnTap()
 
             _settingList = arrayListOf(
                 Setting(R.string.points_to_win, R.drawable.ic_crown, _pointsToWin.value ?: 15),
                 Setting(R.string.points_on_tap, R.drawable.ic_plus, _pointsOnTap.value ?: 1),
             )
 
-            val remoteConfShowAdvertisement = isAdsEnabled()
-            DebugUtils.reportDebug("Remote Config: $remoteConfShowAdvertisement")
-            _showAdvertisement.value = remoteConfShowAdvertisement && appDatastoreRepository.getBoolean(DatastoreKeys.SHOW_ADVERTISEMENT) ?: true
+            _showAdvertisement.value = appRulesRepository.showAds()
         }
-    }
-
-    private suspend fun isAdsEnabled(): Boolean {
-        val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = RemoteConfigKeys.FETCH_INTERVAL_PROD
-        }
-        val remoteConfig = Firebase.remoteConfig.apply {
-            setConfigSettingsAsync(configSettings)
-        }
-
-        try {
-            remoteConfig.fetchAndActivate().await()
-        } catch (e: Exception) {
-            DebugUtils.reportDebug("Unexpected Remote Config Error: ${e.localizedMessage}")
-        }
-
-        return remoteConfig.getBoolean("showAdvertisement")
     }
 
     fun addPointTeam1() {
@@ -120,9 +95,8 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
 
     private fun releaseAccess() {
         _showAdvertisement.value = false
-        DebugUtils.reportDebug("Access Released")
         viewModelScope.launch {
-            appDatastoreRepository.putBoolean(DatastoreKeys.SHOW_ADVERTISEMENT, showAds())
+            appRulesRepository.setShowAds(false)
         }
     }
 
@@ -145,18 +119,24 @@ class ScoreViewModel @Inject constructor(private val appDatastoreRepository: App
     }
 
     fun saveSettings(list: List<Setting>) {
-        updateSettingValues(list)
-        viewModelScope.launch {
-            appDatastoreRepository.putInteger(DatastoreKeys.POINTS_TO_WIN, _pointsToWin.value!!)
-            appDatastoreRepository.putInteger(DatastoreKeys.POINTS_ON_TAP, _pointsOnTap.value!!)
+        if(list.isNotEmpty() && list.size==2) {
+            val newPointsToWin = list[0].value
+            val newPointsOnTap = list[1].value
+            updateSettingsState(newPointsToWin, newPointsOnTap, list)
+            updateSettingsDatabase(newPointsToWin, newPointsOnTap)
         }
     }
 
-    private fun updateSettingValues(list: List<Setting>) {
-        if(list.isNotEmpty() && list.size==2){
-            _settingList = ArrayList(list)
-            _pointsToWin.value = list[0].value
-            _pointsOnTap.value = list[1].value
+    private fun updateSettingsState(newPointsToWin: Int, newPointsOnTap: Int, list: List<Setting>) {
+        _settingList = ArrayList(list)
+        _pointsToWin.value = newPointsToWin
+        _pointsOnTap.value = newPointsOnTap
+    }
+
+    private fun updateSettingsDatabase(newPointsToWin: Int, newPointsOnTap: Int) {
+        viewModelScope.launch {
+            appRulesRepository.setPointsToWin(newPointsToWin)
+            appRulesRepository.setPointsOnTap(newPointsOnTap)
         }
     }
 }

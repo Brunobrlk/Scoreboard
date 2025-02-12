@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 private val Context.appDataStore: DataStore<Preferences> by preferencesDataStore(name = "app_preferences")
 
-class AppDatastoreRepository @Inject constructor(private val context: Context) : AppDatastoreInterface {
+class AppDatastore @Inject constructor(private val context: Context) : AppDatastoreInterface {
     override suspend fun putBoolean(key: String, value: Boolean) {
         val preferencesKey = booleanPreferencesKey(key)
         context.appDataStore.edit { preferences ->

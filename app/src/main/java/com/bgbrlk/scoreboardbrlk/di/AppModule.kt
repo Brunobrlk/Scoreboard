@@ -1,8 +1,11 @@
 package com.bgbrlk.scoreboardbrlk.di
 
 import android.content.Context
+import com.bgbrlk.scoreboardbrlk.repository.AppDatastore
 import com.bgbrlk.scoreboardbrlk.repository.AppDatastoreInterface
-import com.bgbrlk.scoreboardbrlk.repository.AppDatastoreRepository
+import com.bgbrlk.scoreboardbrlk.repository.AppRemoteConfig
+import com.bgbrlk.scoreboardbrlk.repository.AppRules
+import com.bgbrlk.scoreboardbrlk.repository.AppRulesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,6 +18,14 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun providesAppDatastoreRepository(@ApplicationContext context: Context): AppDatastoreInterface =
-        AppDatastoreRepository(context)
+    fun providesAppRulesRepository(appDatastore: AppDatastoreInterface, remoteConfig: AppRemoteConfig): AppRules =
+        AppRulesRepository(appDatastore, remoteConfig)
+
+    @Singleton
+    @Provides
+    fun providesDatastoreRepository(@ApplicationContext context: Context): AppDatastoreInterface = AppDatastore(context)
+
+    @Singleton
+    @Provides
+    fun providesAppRemoteConfig(): AppRemoteConfig = AppRemoteConfig()
 }
