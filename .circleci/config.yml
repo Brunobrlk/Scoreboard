@@ -32,7 +32,7 @@ jobs:
       - run:
           command: ./gradlew check
       - store_test_results:
-          path: build/test-results
+          path: test-results
       - save_cache:
           key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
           paths:
