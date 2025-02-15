@@ -32,13 +32,13 @@ jobs:
       - run:
           command: ./gradlew check
       - store_test_results:
-          path: /home/circleci/project/test-results
+          path: app/build/test-results
       - save_cache:
           key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
           paths:
             - ~/.gradle/caches
       - store_artifacts:
-          path: build/reports
+          path: app/build/reports
   deploy:
     # This is an example deploy job, not actually used by the workflow
     docker:
