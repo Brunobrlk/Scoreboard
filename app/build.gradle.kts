@@ -27,11 +27,11 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            storeFile = file(findProperty("RELEASE_STORE_FILE") ?: throw GradleException("RELEASE_STORE_FILE not defined"))
-            storePassword = findProperty("RELEASE_STORE_PASSWORD")?.toString() ?: throw GradleException("RELEASE_STORE_PASSWORD not defined")
-            keyAlias = findProperty("RELEASE_KEY_ALIAS")?.toString() ?: throw GradleException("RELEASE_KEY_ALIAS not defined")
-            keyPassword = findProperty("RELEASE_KEY_PASSWORD")?.toString() ?: throw GradleException("RELEASE_KEY_PASSWORD not defined")
+        create("release"){
+            storeFile = file(project.property("RELEASE_STORE_FILE") as String)
+            storePassword = project.property("RELEASE_STORE_PASSWORD") as String
+            keyAlias = project.property("RELEASE_KEY_ALIAS") as String
+            keyPassword = project.property("RELEASE_KEY_PASSWORD") as String
         }
     }
 
