@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
     alias(libs.plugins.google.services)
     alias(libs.plugins.crashlytics)
+    id("com.github.triplet.play") version "3.12.1"
 }
 
 android {
@@ -20,8 +21,8 @@ android {
         applicationId = "com.bgbrlk.scoreboardbrlk"
         minSdk = 26
         targetSdk = 35
-        versionCode = 12
-        versionName = "1.3.4"
+        versionCode = 14
+        versionName = "1.3.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         archivesName = getOutputName()
     }
@@ -100,6 +101,17 @@ dependencies {
     androidTestImplementation(libs.androidx.rules)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+play {
+    serviceAccountCredentials.set(file("dev-service-account.json"))
+    defaultToAppBundles.set(true)
+    // internal/alpha/beta/production
+    track.set("alpha")
+
+    val versionName = android.defaultConfig.versionName
+    val versionCode = android.defaultConfig.versionCode
+    releaseName.set("$versionName($versionCode) - Beta")
 }
 
 tasks.register<Zip>("zipSymbols") {
