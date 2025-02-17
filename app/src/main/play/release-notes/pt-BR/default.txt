@@ -1,0 +1,2 @@
+- Implementação de CI/CD
+- Melhorias de código

@@ -9,8 +9,8 @@ app/release/*
 # Local configuration file (sdk path, etc)
 local.properties
 screenshots/
-todo.md
-notes.txt
+notes.md
+*.base64
 
 # Log/OS Files
 *.log

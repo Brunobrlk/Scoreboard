@@ -8,20 +8,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Python & gdown
-          command: |
-            sudo apt update
-            sudo apt install -y python3 python3-pip
-            pip3 install gdown
-      - run:
-          name: Download Keystore from Google Drive
-          command: gdown "$GDRIVE_URL"
-      - run:
           name: Make setup_env.sh executable
-          command: chmod +x ./setup_env.sh
+          command: chmod +x ./.circleci/setup_env.sh
       - run:
           name: Setup environment
-          command: ./setup_env.sh
+          command: ./.circleci/setup_env.sh
       - run:
           name: Calculate cache key
           command: |-
@@ -32,6 +23,9 @@ jobs:
       - run:
           name: App check - Tests
           command: ./gradlew check
+      - run:
+          name: Upload to Google Play
+          command: ./gradlew publishReleaseBundle
       - store_test_results:
           path: app/build/test-results
       - save_cache:
@@ -39,19 +33,7 @@ jobs:
           paths:
             - ~/.gradle/caches
       - store_artifacts:
-          path: app/release/
-      - run:
-          name: Debug
-          command: |
-            pwd
-            ls
-            ls app
-            ./setup_env.sh
-            ls
-            ls app
-      - run:
-          name: Upload to Google Play
-          command: ./gradlew publishReleaseBundle
+          path: app/release
 workflows:
   build-and-test:
     jobs:

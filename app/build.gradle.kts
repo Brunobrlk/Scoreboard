@@ -137,6 +137,20 @@ afterEvaluate{
     }
 }
 
+fun getVersionCode(): Int {
+    val versionName = android.defaultConfig.versionName ?: ""
+    val versionRegex = """^(\d+)\.(\d+)\.(\d+)""".toRegex()
+    val matchResult = versionRegex.find(versionName)
+    val (major, minor, patch) = matchResult?.destructured ?: error("Invalid version format")
+
+    val patchMult = 1
+    val minorMult = 1000
+    val majorMult = 1000000
+    val versionCode = (patchMult*patch.toInt()) + (minorMult * minor.toInt()) + (majorMult * major.toInt())
+
+    return versionCode
+}
+
 fun getOutputName(): String {
     val appName = "scoreboard"
     val versionName = android.defaultConfig.versionName

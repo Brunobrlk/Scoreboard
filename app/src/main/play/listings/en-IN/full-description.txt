@@ -1,0 +1,4 @@
+- A practical and lightweight app for keeping track of game scores!
+- Customize your points: You can set how many points to add per click, making it perfect for various types of games.
+- Set the winning score: Choose the target score and easily track who’s in the lead.
+- Accessibility is one of our priorities, please give us a feedback in case you need our help or want to help us improve :)

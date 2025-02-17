@@ -1,0 +1,1 @@
+A simple and lightweight score tracking app for tracking scores on games
