@@ -1,8 +1,31 @@
-# This config was automatically generated from your source code
-# Stacks detected: deps:java:.,tool:gradle:
 version: 2.1
+
 jobs:
-  test-java:
+  # Unit Test
+  test-local:
+    docker:
+      - image: cimg/android:2025.02.1
+    steps:
+      - checkout
+      - run:
+          name: Make setup_env.sh executable
+          command: chmod +x ./.circleci/setup_env.sh
+      - run:
+          name: Setup environment
+          command: ./.circleci/setup_env.sh
+      - restore_cache:
+          key: cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}
+      - run:
+          name: Run Unit Tests
+          command: ./gradlew testReleaseUnitTest
+      - store_test_results:
+          path: app/build/test-results
+      - save_cache:
+          key: cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}
+          paths:
+            - ~/.gradle/caches
+
+  test-android:
     docker:
       - image: cimg/android:2025.02.1
     steps:
@@ -14,27 +37,104 @@ jobs:
           name: Setup environment
           command: ./.circleci/setup_env.sh
       - run:
-          name: Calculate cache key
-          command: |-
-            find . -name 'pom.xml' -o -name 'gradlew*' -o -name '*.gradle*' | \
-                    sort | xargs cat > /tmp/CIRCLECI_CACHE_KEY
-      - restore_cache:
-          key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
+          name: Start Emulator
+          command: |
+            sdkmanager "system-images;android-30;google_apis;x86_64"
+            echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64"
+            nohup emulator -avd testAVD -no-audio -no-window &
       - run:
-          name: App check - Tests
-          command: ./gradlew check
+          name: Wait for Emulator
+          command: |
+            sleep 60
+            adb shell input keyevent 82
       - run:
-          name: Upload to Google Play
-          command: ./gradlew publishReleaseBundle
+          name: Run Instrumented Tests
+          command: ./gradlew connectedReleaseAndroidTest
       - store_test_results:
-          path: app/build/test-results
+          path: app/build/outputs/androidTest-results
+
+  firebase-test:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - checkout
+      - run:
+          name: Install Firebase CLI
+          command: curl -sL https://firebase.tools | bash
+      - run:
+          name: Firebase Test Lab - Run Matrix
+          command: |
+            gcloud auth activate-service-account --key-file=app/dev-service-account.json
+            gcloud --quiet config set project FIREBASE_PROJECT_ID
+            gcloud firebase test android run \
+              --type instrumentation \
+              --app app/build/outputs/apk/release/app-release.apk \
+              --test app/build/outputs/apk/androidTest/release/app-release-androidTest.apk \
+              --device model=Pixel2,version=30,locale=en,orientation=portrait \
+              --device model=Nexus6,version=28,locale=en,orientation=landscape \
+              --timeout 15m
+
+  build-release:
+    docker:
+      - image: cimg/android:2025.02.1
+    steps:
+      - checkout
+      - run:
+          name: Make setup_env.sh executable
+          command: chmod +x ./.circleci/setup_env.sh
+      - run:
+          name: Setup environment
+          command: ./.circleci/setup_env.sh
+      - restore_cache:
+          key: cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}
+      - run:
+          name: Lint Release Only
+          command: ./gradlew lintRelease
+      - run:
+          name: Build Release AAB
+          command: ./gradlew bundleRelease
+      - run:
+          name: Build Release APK
+          command: ./gradlew assembleRelease
       - save_cache:
-          key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
+          key: cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}
           paths:
             - ~/.gradle/caches
+      - persist_to_workspace:
+          root: app/build/outputs/
+          paths:
+            - bundle/release/*.aab
+            - apk/release/*.apk
+
+  deploy:
+    docker:
+      - image: cimg/android:2025.02.1
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /workspace
+      - run:
+          name: Upload to Google Play
+          command: ./gradlew publishReleaseBundle -Partifact=/workspace/app-release.aab
       - store_artifacts:
-          path: app/release
+          path: /workspace
+
 workflows:
-  build-and-test:
+  test-and-deploy:
     jobs:
-      - test-java
+      - test-local
+#      - test-android
+#      - firebase-test
+      - build-release:
+          requires:
+            - test-local
+#            - test-android
+#            - firebase-test
+      - deploy:
+          requires:
+            - build-release
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /^\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format X.Y.Z
