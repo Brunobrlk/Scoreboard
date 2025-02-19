@@ -21,10 +21,10 @@ android {
         applicationId = "com.bgbrlk.scoreboardbrlk"
         minSdk = 26
         targetSdk = 35
-        versionCode = 14
         versionName = "1.3.6"
+        versionCode = getVersionCode()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        archivesName = getOutputName()
+        archivesName = getCustomVersionName()
     }
 
     signingConfigs {
@@ -106,12 +106,16 @@ dependencies {
 play {
     serviceAccountCredentials.set(file("dev-service-account.json"))
     defaultToAppBundles.set(true)
+
+    // Circleci workspace integration
+    artifactDir.set(file("../workspace/app/build/outputs/bundle/release"))
+
     // internal/alpha/beta/production
-    track.set("alpha")
+    track.set("internal")
 
     val versionName = android.defaultConfig.versionName
     val versionCode = android.defaultConfig.versionCode
-    releaseName.set("$versionName($versionCode) - Beta")
+    releaseName.set("$versionName($versionCode) - Alpha")
 }
 
 tasks.register<Zip>("zipSymbols") {
@@ -119,7 +123,7 @@ tasks.register<Zip>("zipSymbols") {
     description = "Zips the merged native libs into symbols.zip."
 
     val outputDir = file("${project.projectDir}/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib")
-    val baseName = getOutputName()
+    val baseName = getCustomVersionName()
     val symbolsZipName = "$baseName-symbols.zip"
     val outputZip = file("${project.projectDir}/release/$symbolsZipName")
 
@@ -143,15 +147,15 @@ fun getVersionCode(): Int {
     val matchResult = versionRegex.find(versionName)
     val (major, minor, patch) = matchResult?.destructured ?: error("Invalid version format")
 
-    val patchMult = 1
-    val minorMult = 1000
-    val majorMult = 1000000
-    val versionCode = (patchMult*patch.toInt()) + (minorMult * minor.toInt()) + (majorMult * major.toInt())
+    val patchMultiplier = 1
+    val minorMultiplier = 1000
+    val majorMultiplier = 1000000
+    val versionCode = (patchMultiplier*patch.toInt()) + (minorMultiplier * minor.toInt()) + (majorMultiplier * major.toInt())
 
     return versionCode
 }
 
-fun getOutputName(): String {
+fun getCustomVersionName(): String {
     val appName = "scoreboard"
     val versionName = android.defaultConfig.versionName
     val versionCode = android.defaultConfig.versionCode

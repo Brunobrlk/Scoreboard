@@ -8,11 +8,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Make setup_env.sh executable
-          command: chmod +x ./.circleci/setup_env.sh
-      - run:
           name: Setup environment
-          command: ./.circleci/setup_env.sh
+          command: chmod +x ./.circleci/setup_environment && ./.circleci/setup_environment
       - restore_cache:
           key: cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}
       - run:
@@ -31,11 +28,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Make setup_env.sh executable
-          command: chmod +x ./.circleci/setup_env.sh
-      - run:
           name: Setup environment
-          command: ./.circleci/setup_env.sh
+          command: chmod +x ./.circleci/setup_environment && ./.circleci/setup_environment
       - run:
           name: Start Emulator
           command: |
@@ -65,11 +59,11 @@ jobs:
           name: Firebase Test Lab - Run Matrix
           command: |
             gcloud auth activate-service-account --key-file=app/dev-service-account.json
-            gcloud --quiet config set project FIREBASE_PROJECT_ID
+            gcloud --quiet config set project scoreboardbrlk
             gcloud firebase test android run \
               --type instrumentation \
-              --app app/build/outputs/apk/release/app-release.apk \
-              --test app/build/outputs/apk/androidTest/release/app-release-androidTest.apk \
+              --app app/build/outputs/bundle/release/app-release.aab \
+              --test app/build/outputs/bundle/release/app-release.aab \
               --device model=Pixel2,version=30,locale=en,orientation=portrait \
               --device model=Nexus6,version=28,locale=en,orientation=landscape \
               --timeout 15m
@@ -80,11 +74,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Make setup_env.sh executable
-          command: chmod +x ./.circleci/setup_env.sh
-      - run:
           name: Setup environment
-          command: ./.circleci/setup_env.sh
+          command: chmod +x ./.circleci/setup_environment && ./.circleci/setup_environment
       - restore_cache:
           key: cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}
       - run:
@@ -101,10 +92,11 @@ jobs:
           paths:
             - ~/.gradle/caches
       - persist_to_workspace:
-          root: app/build/outputs/
+          root: .
           paths:
-            - bundle/release/*.aab
-            - apk/release/*.apk
+            - app/build/outputs/apk/release
+            - app/build/outputs/bundle/release
+            - app/build/outputs/bundle/*.aab
 
   deploy:
     docker:
@@ -112,12 +104,15 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: /workspace
+          at: workspace
+      - run:
+          name: Setup environment
+          command: chmod +x ./.circleci/setup_environment && ./.circleci/setup_environment
       - run:
           name: Upload to Google Play
-          command: ./gradlew publishReleaseBundle -Partifact=/workspace/app-release.aab
+          command: ./gradlew publishReleaseBundle
       - store_artifacts:
-          path: /workspace
+          path: workspace
 
 workflows:
   test-and-deploy:

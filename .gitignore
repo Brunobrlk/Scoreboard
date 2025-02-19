@@ -11,6 +11,7 @@ google-services.json
 dev-service-account.json
 local.properties
 *.base64
+local_*
 
 # Keystore files
 *.jks
