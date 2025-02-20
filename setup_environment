@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# Author: Bruno Guimarães
+# Description: Setup environment for ci
+# Version: 1.0
+# Last Updated: 20/02/2025
+
+
+# Display script usage information
+usage() {
+  cat <<EOF
+$(basename $0) - Setup ci environment
+
+Description:
+    $(basename $0) is a script for setup the android project with necessary files and folders.
+    It generates files such as local.properties, release-key.jks, google-services.json, dev-service-account.json, etc.
+
+Usage:
+    $(basename $0) [options]
+
+Options:
+    -h, --help          Display this help message and exit
+
+Examples:
+    $(basename $0) # Generates the necessary files
+EOF
+exit 0
+}
+
+# Parse command-line options
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h | --help)
+            usage
+            ;;
+        -*)
+            echo "Error: Unknown option: $1"
+            usage
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+# Main script logic goes here
+INFO='\033[0;34m[BRLK INFO]'
+
+# echo -e "$INFO - Generating local.properties file..."
+# echo "ADMOB_APP_ID=$ADMOB_APP_ID" >> local.properties
+# echo "INTERSTITIAL_AD_UNIT_ID=$INTERSTITIAL_AD_UNIT_ID" >> local.properties
+
+# echo -e  "$INFO - Generating google-services.json file..."
+# echo $GOOGLE_SERVICES > google-services.base64
+# base64 -d google-services.base64 > app/google-services.json
+
+# echo -e "$INFO - Generating dev-services-account.json file..."
+# echo $DEV_SERVICE_ACCOUNT > dev-service-account.base64
+# base64 -d dev-service-account.base64 > app/dev-service-account.json
+
+# echo -e "$INFO - Generating release-key.jks file..."
+# echo $RELEASE_KEY > release-key.base64
+# base64 -d release-key.base64 > app/release-key.jks
+# base64 -d release-key.base64 > release-key.jks
+
+INFO='\033[0;34m[BRLK INFO]'
+
+echo -e "$INFO - Generating local.properties file..."
+[[ -n "$ADMOB_APP_ID" ]] && echo "ADMOB_APP_ID=$ADMOB_APP_ID" >> local.properties
+[[ -n "$INTERSTITIAL_AD_UNIT_ID" ]] && echo "INTERSTITIAL_AD_UNIT_ID=$INTERSTITIAL_AD_UNIT_ID" >> local.properties
+
+echo -e  "$INFO - Generating google-services.json file..."
+[[ -n "$GOOGLE_SERVICES" ]] && echo "$GOOGLE_SERVICES" | base64 -d > app/google-services.json || echo "[ERROR] GOOGLE_SERVICES is empty"
+
+echo -e "$INFO - Generating dev-services-account.json file..."
+[[ -n "$DEV_SERVICE_ACCOUNT" ]] && echo "$DEV_SERVICE_ACCOUNT" | base64 -d > app/dev-service-account.json || echo "[ERROR] DEV_SERVICE_ACCOUNT is empty"
+
+echo -e "$INFO - Generating release-key.jks file..."
+[[ -n "$RELEASE_KEY" ]] && echo "$RELEASE_KEY" | base64 -d > app/release-key.jks || echo "[ERROR] RELEASE_KEY is empty"
+[[ -n "$RELEASE_KEY" ]] && echo "$RELEASE_KEY" | base64 -d > release-key.jks || echo "[ERROR] RELEASE_KEY is empty"
+
+# Exit with success status
+exit 0
