@@ -3,8 +3,9 @@
 Scoreboard Android App using kotlin + MVVM, Material3, Data Binding, Live Data, Datastore, Coroutines, DaggerHilt, Firebase(Analytics, Crashlytics, RemoteConfig, Performance), AdMob, Navigation UI, local tests - JUnit, instrumented tests - Espresso and CI/CD with CircleCI + Gradle Play Plugin(GPP)
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/circleci/Fzxtge7y4mRCi4CnqUZj2X/DDJNEcHTQ63HataPVnExAU/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/Fzxtge7y4mRCi4CnqUZj2X/DDJNEcHTQ63HataPVnExAU/tree/master)
+![UnitTests](https://img.shields.io/github/actions/workflow/status/Brunobrlk/Scoreboard/build-and-test.yml?logo=githubactions&logoColor=FFFFFF&label=Unit%20Tests)
 ![Version](https://img.shields.io/github/v/tag/Brunobrlk/Scoreboard?label=version)
-![Android](https://img.shields.io/badge/platform-android-green.svg)
+![Android](https://img.shields.io/badge/platform-android-brightgreen.svg)
 ![Min API Level](https://img.shields.io/badge/min%20API%20level-26-blue.svg)
 ![Target API Level](https://img.shields.io/badge/target%20API%20level-35-blue.svg)
 ![Downloads](https://img.shields.io/badge/downloads-300+-brightgreen.svg)
