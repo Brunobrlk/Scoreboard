@@ -125,11 +125,11 @@ workflows:
             - test-local
 #            - test-android
 #            - firebase-test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format vX.Y.Z
       - deploy:
           requires:
             - build-release
-          filters:
-            branches:
-              only: master
-            tags:
-              only: /^\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format X.Y.Z
