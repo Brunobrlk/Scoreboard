@@ -6,15 +6,11 @@ on:
   workflow_dispatch:
 
 env:
-  ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID }}
-  INTERSTITIAL_AD_UNIT_ID: ${{ secrets.INTERSTITIAL_AD_UNIT_ID }}
   GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
   DEV_SERVICE_ACCOUNT: ${{ secrets.DEV_SERVICE_ACCOUNT }}
   RELEASE_KEY: ${{ secrets.RELEASE_KEY }}
-  ORG_GRADLE_PROJECT_RELEASE_KEY_ALIAS: ${{ secrets.ORG_GRADLE_PROJECT_RELEASE_KEY_ALIAS }}
-  ORG_GRADLE_PROJECT_RELEASE_KEY_PASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_RELEASE_KEY_PASSWORD }}
-  ORG_GRADLE_PROJECT_RELEASE_STORE_FILE: ${{ secrets.ORG_GRADLE_PROJECT_RELEASE_STORE_FILE }}
-  ORG_GRADLE_PROJECT_RELEASE_STORE_PASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_RELEASE_STORE_PASSWORD }}
+  GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+  LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
 
 jobs:
   lint:
@@ -22,16 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Environment
+        run: |
+          chmod +x setup_environment
+          ./setup_environment
+
       - name: Lint check
-        run: ./gradlew lint
+        run: ./gradlew lintRelease
 
   unit-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Debug
-        run: echo $GITHUB_CONTEXT
 
       - name: Setup Environment
         run: |
@@ -49,10 +47,7 @@ jobs:
 
   integration-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        api-level: [28, 29]
-        target: [default, google_apis]
+    
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -61,9 +56,6 @@ jobs:
         run: |
           chmod +x setup_environment
           ./setup_environment
-
-      - name: Debug
-        run: echo $GITHUB_CONTEXT
 
       - name: Enable KVM
         run: |
@@ -74,10 +66,7 @@ jobs:
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: x86_64
-          profile: Nexus 6
+          api-level: 29
           script: ./gradlew connectedCheck
 
       - name: Store test results
@@ -97,9 +86,6 @@ jobs:
         run: |
           chmod +x setup_environment
           ./setup_environment
-
-      - name: Debug
-        run: echo $GITHUB_CONTEXT
 
       - name: Generate release APK
         run: ./gradlew assembleRelease

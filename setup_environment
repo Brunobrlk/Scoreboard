@@ -67,18 +67,29 @@ INFO='\033[0;34m[BRLK INFO]'
 INFO='\033[0;34m[BRLK INFO]'
 
 echo -e "$INFO - Generating local.properties file..."
-[[ -n "$ADMOB_APP_ID" ]] && echo "ADMOB_APP_ID=$ADMOB_APP_ID" >> local.properties
-[[ -n "$INTERSTITIAL_AD_UNIT_ID" ]] && echo "INTERSTITIAL_AD_UNIT_ID=$INTERSTITIAL_AD_UNIT_ID" >> local.properties
+echo $LOCAL_PROPERTIES | base64 --decode > local.properties
+echo -e "$INFO - Word Count: $(cat local.properties | wc -w)"
+echo -e "$INFO - Bytes Count: $(cat local.properties | wc -c)"
+
+echo -e "$INFO - Generating gradle.properties file..."
+echo $GRADLE_PROPERTIES | base64 --decode > gradle.properties
+echo -e "$INFO - Word Count: $(cat gradle.properties | wc -w)"
+echo -e "$INFO - Bytes Count: $(cat gradle.properties | wc -c)"
 
 echo -e  "$INFO - Generating google-services.json file..."
-[[ -n "$GOOGLE_SERVICES" ]] && echo "$GOOGLE_SERVICES" | base64 -d > app/google-services.json || echo "[ERROR] GOOGLE_SERVICES is empty"
+echo $GOOGLE_SERVICES | base64 --decode > app/google-services.json
+echo -e "$INFO - Word Count: $(cat app/google-services.json | wc -w)"
+echo -e "$INFO - Bytes Count: $(cat app/google-services.json | wc -c)"
 
 echo -e "$INFO - Generating dev-services-account.json file..."
-[[ -n "$DEV_SERVICE_ACCOUNT" ]] && echo "$DEV_SERVICE_ACCOUNT" | base64 -d > app/dev-service-account.json || echo "[ERROR] DEV_SERVICE_ACCOUNT is empty"
+echo $DEV_SERVICE_ACCOUNT | base64 --decode > app/dev-service-account.json
+echo -e "$INFO - Word Count: $(cat app/dev-service-account.json | wc -w)"
+echo -e "$INFO - Bytes Count: $(cat app/dev-service-account.json | wc -c)"
 
 echo -e "$INFO - Generating release-key.jks file..."
-[[ -n "$RELEASE_KEY" ]] && echo "$RELEASE_KEY" | base64 -d > app/release-key.jks || echo "[ERROR] RELEASE_KEY is empty"
-[[ -n "$RELEASE_KEY" ]] && echo "$RELEASE_KEY" | base64 -d > release-key.jks || echo "[ERROR] RELEASE_KEY is empty"
+echo $RELEASE_KEY | base64 --decode > app/release-key.jks
+echo -e "$INFO - Word Count: $(cat app/release-key.jks | wc -w)"
+echo -e "$INFO - Bytes Count: $(cat app/release-key.jks | wc -c)"
 
 # Exit with success status
 exit 0
