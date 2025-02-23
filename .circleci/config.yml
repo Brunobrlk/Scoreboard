@@ -1,8 +1,24 @@
 version: 2.1
 
 jobs:
+  lint:
+    docker:
+      - image: cimg/android:2025.02.1
+    steps:
+      - checkout
+      - run:
+          name: Setup environment
+          command: chmod +x setup_environment && ./setup_environment
+      - restore_cache:
+          key: cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}
+      - run:
+          name: Lint Release Only
+          command: ./gradlew lintRelease
+      - store_artifacts:
+          path: app/build/reports
+
   # Unit Test
-  test-local:
+  unit-test:
     docker:
       - image: cimg/android:2025.02.1
     steps:
@@ -68,20 +84,6 @@ jobs:
               --device model=Nexus6,version=28,locale=en,orientation=landscape \
               --timeout 15m
 
-  lint:
-    docker:
-      - image: cimg/android:2025.02.1
-    steps:
-      - checkout
-      - run:
-          name: Setup environment
-          command: chmod +x setup_environment && ./setup_environment
-      - restore_cache:
-          key: cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}
-      - run:
-          name: Lint Release Only
-          command: ./gradlew lintRelease
-
   build-release:
     docker:
       - image: cimg/android:2025.02.1
@@ -132,12 +134,12 @@ workflows:
   test-and-deploy:
     jobs:
       - lint
-      - test-local
+      - unit-test
 #      - test-android
 #      - firebase-test
       - build-release:
           requires:
-            - test-local
+            - unit-test
 #            - test-android
 #            - firebase-test
           filters:

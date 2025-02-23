@@ -5,15 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bgbrlk.scoreboardbrlk.R
-import com.bgbrlk.scoreboardbrlk.domain.Setting
+import com.bgbrlk.scoreboardbrlk.domain.models.Setting
 import com.bgbrlk.scoreboardbrlk.helpers.DebugUtils
-import com.bgbrlk.scoreboardbrlk.repository.AppRules
+import com.bgbrlk.scoreboardbrlk.domain.repository.AppSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ScoreViewModel @Inject constructor(private val appRulesRepository: AppRules) : ViewModel() {
+class ScoreViewModel @Inject constructor(private val appSettings: AppSettings) : ViewModel() {
     private var _finishingGame = MutableLiveData<Boolean>()
     val finishingGame: LiveData<Boolean>
         get() = _finishingGame
@@ -43,15 +43,15 @@ class ScoreViewModel @Inject constructor(private val appRulesRepository: AppRule
 
     init {
         viewModelScope.launch {
-            _pointsToWin.value = appRulesRepository.getPointsToWin()
-            _pointsOnTap.value = appRulesRepository.getPointsOnTap()
+            _pointsToWin.value = appSettings.getPointsToWin()
+            _pointsOnTap.value = appSettings.getPointsOnTap()
 
             _settingList = arrayListOf(
                 Setting(R.string.points_to_win, R.drawable.ic_crown, _pointsToWin.value ?: 15),
                 Setting(R.string.points_on_tap, R.drawable.ic_plus, _pointsOnTap.value ?: 1),
             )
 
-            _showAdvertisement.value = appRulesRepository.showAds()
+            _showAdvertisement.value = appSettings.showAds()
         }
     }
 
@@ -96,7 +96,7 @@ class ScoreViewModel @Inject constructor(private val appRulesRepository: AppRule
     private fun releaseAccess() {
         _showAdvertisement.value = false
         viewModelScope.launch {
-            appRulesRepository.setShowAds(false)
+            appSettings.setShowAds(false)
         }
     }
 
@@ -135,8 +135,8 @@ class ScoreViewModel @Inject constructor(private val appRulesRepository: AppRule
 
     private fun updateSettingsDatabase(newPointsToWin: Int, newPointsOnTap: Int) {
         viewModelScope.launch {
-            appRulesRepository.setPointsToWin(newPointsToWin)
-            appRulesRepository.setPointsOnTap(newPointsOnTap)
+            appSettings.setPointsToWin(newPointsToWin)
+            appSettings.setPointsOnTap(newPointsOnTap)
         }
     }
 }

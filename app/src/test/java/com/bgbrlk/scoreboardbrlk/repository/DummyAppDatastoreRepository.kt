@@ -1,6 +1,8 @@
 package com.bgbrlk.scoreboardbrlk.repository
 
-object DummyAppDatastoreRepository : AppRules {
+import com.bgbrlk.scoreboardbrlk.domain.repository.AppSettings
+
+object DummyAppDatastoreRepository : AppSettings {
     override suspend fun getPointsToWin() = 15
 
     override suspend fun getPointsOnTap() = 1

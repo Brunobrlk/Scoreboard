@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bgbrlk.scoreboardbrlk.databinding.ItemSettingsBinding
-import com.bgbrlk.scoreboardbrlk.domain.Setting
+import com.bgbrlk.scoreboardbrlk.domain.models.Setting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="setting"
-            type="com.bgbrlk.scoreboardbrlk.domain.Setting" />
+            type="com.bgbrlk.scoreboardbrlk.domain.models.Setting" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

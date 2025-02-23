@@ -1,4 +1,4 @@
-package com.bgbrlk.scoreboardbrlk.domain
+package com.bgbrlk.scoreboardbrlk.domain.models
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
