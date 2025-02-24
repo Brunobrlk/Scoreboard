@@ -21,7 +21,7 @@ android {
         applicationId = "com.bgbrlk.scoreboardbrlk"
         minSdk = 26
         targetSdk = 35
-        versionName = "1.3.6"
+        versionName = "1.3.7"
         versionCode = getVersionCode()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         archivesName = getCustomVersionName()

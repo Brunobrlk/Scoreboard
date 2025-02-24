@@ -1,0 +1,56 @@
+name: CD - Deploy to Play Store
+
+on:
+  workflow_run:
+    workflows: ["CI - Test and Build"]
+    types:
+      - completed
+
+  workflow_dispatch:
+
+
+env:
+  GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+  DEV_SERVICE_ACCOUNT: ${{ secrets.DEV_SERVICE_ACCOUNT }}
+  RELEASE_KEY: ${{ secrets.RELEASE_KEY }}
+  GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+  LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+
+jobs:
+  # Learn how to use build from another workflow
+  deploy-playstore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          chmod +x setup_environment
+          ./setup_environment
+
+      - uses: dawidd6/action-download-artifact@v8
+        with:
+          workflow: build-and-test.yml
+          name: release-artifacts
+
+      - name: Debug
+        run: |
+          sudo apt install tree
+          tree
+
+      - name: Get Version
+        id: versionName
+        run: echo VERSION_NAME="v$(grep 'versionName =' build.gradle.kts | head -1 | awk -F\" '{ print $2 }')" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: app/dev-service-account.json
+          releaseName: ${{ steps.versionName.outputs.VERSION_NAME }}
+          packageName: com.bgbrlk.scoreboardbrlk
+          releaseFiles: outputs/bundle/release/*.aab
+          track: internal
+          status: completed
+          whatsNewDirectory: distribution/whatsnew
+          mappingFile: outputs/mapping/release/mapping.txt
+          debugSymbols: intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib

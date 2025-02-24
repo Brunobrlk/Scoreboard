@@ -1,10 +1,12 @@
-name: CI
+name: CI - Test and Build
 
 on:
-  # push:
-  #   branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+
+  # push:
+  #   paths:
+  #     - '.github/workflows/*'
 
   workflow_dispatch:
 
@@ -99,6 +101,9 @@ jobs:
       - name: Store AAB and APK files
         uses: actions/upload-artifact@v4
         with:
+          name: release-artifacts
           path: |
             app/build/outputs/bundle/release/*.aab
-            app/build/outputs/apks/release/*.apk
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/mapping/release/mapping.txt
+            app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib
