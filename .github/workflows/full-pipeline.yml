@@ -8,9 +8,6 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'  # Matches x.y.z format
       - 'v[0-9]+.[0-9]+.[0-9]+'  # Matches vx.y.z format
-  # push:
-  #   paths:
-  #     - '.github/workflows/*'
 
   workflow_dispatch:
 

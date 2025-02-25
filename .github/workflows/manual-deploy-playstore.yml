@@ -1,0 +1,36 @@
+name: Manual Deploy to Play Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release Name
+        required: true
+
+jobs:
+  deploy-playstore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dawidd6/action-download-artifact@v8
+        with:
+          workflow: build-and-test.yml
+          name: release-artifacts
+
+      - name: Get Version
+        id: versionName
+        run: echo VERSION_NAME="v$(grep 'versionName =' build.gradle.kts | head -1 | awk -F\" '{ print $2 }')" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: app/dev-service-account.json
+          releaseName: ${{ steps.versionName.outputs.VERSION_NAME }}
+          packageName: com.bgbrlk.scoreboardbrlk
+          releaseFiles: outputs/bundle/release/*.aab
+          track: internal
+          status: completed
+          whatsNewDirectory: distribution/whatsnew
+          mappingFile: outputs/mapping/release/mapping.txt
+          debugSymbols: intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib

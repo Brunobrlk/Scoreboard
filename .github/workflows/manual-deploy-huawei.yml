@@ -1,0 +1,30 @@
+name: Manual Deploy to Huawei AppGallery
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-playstore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dawidd6/action-download-artifact@v8
+        with:
+          workflow: build-and-test.yml
+          name: release-artifacts
+
+      - name: Get APK name
+        id: get_apk_name
+        run: |
+          APK_PATH=$(ls outputs/bundle/release/*.aab | head -1)
+          echo "APK_NAME=$APK_PATH" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Huawei App Gallery
+        uses: kienlv58/appgallery-deply-action@main
+          	
+        with:
+          client-id: ${{secrets.HUAWEI_CLIENT_ID}}
+          client-key: ${{secrets.HUAWEI_CLIENT_KEY}}
+          app-id: ${{secrets.HUAWEI_APP_ID}}
+          file-extension: "aab"
+          file-path: ${{ steps.get_apk_name.outputs.APK_NAME }}
+          submit: true
