@@ -9,6 +9,7 @@ on:
 
 jobs:
   deploy-playstore:
+    name: Deploy to PlayStore => Uptodown, Aptoide and APKPure(Automatically updates linked)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
