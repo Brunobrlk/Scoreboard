@@ -249,7 +249,7 @@ jobs:
       - name: Get AAB name
         id: get_aab_name
         run: |
-          AAB_PATH=$(ls outputs/bundle/release/*.apk | head -1)
+          AAB_PATH=$(ls outputs/bundle/release/*.aab | head -1)
           echo "AAB_NAME=$AAB_PATH" >> $GITHUB_OUTPUT
 
       - name: Deploy to Huawei App Gallery
