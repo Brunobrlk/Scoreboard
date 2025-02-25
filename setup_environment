@@ -2,35 +2,55 @@
 
 # Author: Bruno Guimarães
 # Description: Setup environment for ci
-# Version: 1.0
+# Version: 1.1
 # Last Updated: 20/02/2025
 
 INFO='\033[0;34m[BRLK INFO]'
+WARNING='\033[0;33m[BRLK WARNING]'
 
-echo -e "$INFO - Generating local.properties file..."
-echo $LOCAL_PROPERTIES | base64 --decode > local.properties
-echo -e "$INFO - Word Count: $(cat local.properties | wc -w)"
-echo -e "$INFO - Bytes Count: $(cat local.properties | wc -c)"
+# Function to check if an environment variable is set and not empty
+check_env_var() {
+    if [ -z "${!1}" ]; then
+        echo -e "$WARNING - $1 is empty, Skipping..."
+        return 1
+    fi
+    return 0
+}
 
-echo -e "$INFO - Generating gradle.properties file..."
-echo $GRADLE_PROPERTIES | base64 --decode > gradle.properties
-echo -e "$INFO - Word Count: $(cat gradle.properties | wc -w)"
-echo -e "$INFO - Bytes Count: $(cat gradle.properties | wc -c)"
+if check_env_var "LOCAL_PROPERTIES"; then
+    echo -e "$INFO - Generating local.properties file..."
+    echo $LOCAL_PROPERTIES | base64 --decode > local.properties
+    echo -e "$INFO - Word Count: $(cat local.properties | wc -w)"
+    echo -e "$INFO - Bytes Count: $(cat local.properties | wc -c)"
+fi
 
-echo -e  "$INFO - Generating google-services.json file..."
-echo $GOOGLE_SERVICES | base64 --decode > app/google-services.json
-echo -e "$INFO - Word Count: $(cat app/google-services.json | wc -w)"
-echo -e "$INFO - Bytes Count: $(cat app/google-services.json | wc -c)"
+if check_env_var "GRADLE_PROPERTIES"; then
+    echo -e "$INFO - Generating gradle.properties file..."
+    echo $GRADLE_PROPERTIES | base64 --decode > gradle.properties
+    echo -e "$INFO - Word Count: $(cat gradle.properties | wc -w)"
+    echo -e "$INFO - Bytes Count: $(cat gradle.properties | wc -c)"
+fi
 
-echo -e "$INFO - Generating dev-services-account.json file..."
-echo $DEV_SERVICE_ACCOUNT | base64 --decode > app/dev-service-account.json
-echo -e "$INFO - Word Count: $(cat app/dev-service-account.json | wc -w)"
-echo -e "$INFO - Bytes Count: $(cat app/dev-service-account.json | wc -c)"
+if check_env_var "GOOGLE_SERVICES"; then
+    echo -e "$INFO - Generating google-services.json file..."
+    echo $GOOGLE_SERVICES | base64 --decode > app/google-services.json
+    echo -e "$INFO - Word Count: $(cat app/google-services.json | wc -w)"
+    echo -e "$INFO - Bytes Count: $(cat app/google-services.json | wc -c)"
+fi
 
-echo -e "$INFO - Generating release-key.jks file..."
-echo $RELEASE_KEY | base64 --decode > app/release-key.jks
-echo -e "$INFO - Word Count: $(cat app/release-key.jks | wc -w)"
-echo -e "$INFO - Bytes Count: $(cat app/release-key.jks | wc -c)"
+if check_env_var "DEV_SERVICE_ACCOUNT"; then
+    echo -e "$INFO - Generating dev-services-account.json file..."
+    echo $DEV_SERVICE_ACCOUNT | base64 --decode > app/dev-service-account.json
+    echo -e "$INFO - Word Count: $(cat app/dev-service-account.json | wc -w)"
+    echo -e "$INFO - Bytes Count: $(cat app/dev-service-account.json | wc -c)"
+fi
+
+if check_env_var "RELEASE_KEY"; then
+    echo -e "$INFO - Generating release-key.jks file..."
+    echo $RELEASE_KEY | base64 --decode > app/release-key.jks
+    echo -e "$INFO - Word Count: $(cat app/release-key.jks | wc -w)"
+    echo -e "$INFO - Bytes Count: $(cat app/release-key.jks | wc -c)"
+fi
 
 # Exit with success status
 exit 0

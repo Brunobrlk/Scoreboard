@@ -1,5 +1,11 @@
 version: 2.1
 
+filters:
+  branches:
+    ignore: /.*/
+  tags:
+    only: /^v\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format vX.Y.Z
+
 jobs:
   lint:
     docker:
