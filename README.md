@@ -20,7 +20,11 @@ Scoreboard Android App using kotlin + MVVM, Material3, Data Binding, Live Data, 
 - [Contact](#contact)
 
 ## Screenshots
-<img src="screenshot.png" style="height: 340px;" alt="Home screen screenshot">
+### App
+<img src="screenshot_app.png" style="height: 340px;" alt="Home screen screenshot">
+
+### CI/CD Pipeline
+<img src="screenshot_ci_cd.png" style="height: 340px;" alt="CI/CD screenshot">
 
 ## Features
 
