@@ -26,7 +26,7 @@ Scoreboard Android App using kotlin + MVVM, Material3, Data Binding, Live Data, 
 ### CI/CD Pipeline
 <img src="screenshot_ci_cd.png" style="min-height: 200px;" alt="CI/CD screenshot">
 
-**Aptoide**, **Uptodown** and **APKPure** are linked to **Play Store**. They automatically get updated once the _deploy-playstore_ job completes
+**Aptoide**, **Uptodown** and **APKPure** are linked to **Play Store**. They are automatically updated once the _deploy-playstore_ job completes.
 
 ## Features
 
