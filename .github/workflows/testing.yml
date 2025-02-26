@@ -1,0 +1,56 @@
+name: Testing
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Available Variables
+        run: |
+          echo "GITHUB_REF_NAME: ${{ github.ref_name }}"
+          echo "GITHUB_REF: ${{ github.ref }}"
+          echo "GITHUB_SHA: ${{ github.sha }}"
+          echo "GITHUB_REPOSITORY: ${{ github.repository }}"
+          echo "GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}"
+          echo "GITHUB_RUN_ID: ${{ github.run_id }}"
+          echo "GITHUB_RUN_NUMBER: ${{ github.run_number }}"
+          echo "GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}"
+          echo "GITHUB_ACTOR: ${{ github.actor }}"
+          echo "GITHUB_WORKFLOW: ${{ github.workflow }}"
+          echo "GITHUB_ACTION: ${{ github.action }}"
+          echo "GITHUB_EVENT_NAME: ${{ github.event_name }}"
+          echo "GITHUB_EVENT_PATH: ${{ github.event_path }}"
+          echo "GITHUB_WORKSPACE: ${{ github.workspace }}"
+          echo "GITHUB_HEAD_REF: ${{ github.head_ref }}"
+          echo "GITHUB_BASE_REF: ${{ github.base_ref }}"
+          echo "GITHUB_SERVER_URL: ${{ github.server_url }}"
+          echo "GITHUB_API_URL: ${{ github.api_url }}"
+          echo "GITHUB_GRAPHQL_URL: ${{ github.graphql_url }}"
+          echo "GITHUB_JOB: ${{ github.job }}"
+          echo "GITHUB_ENV: ${{ github.env }}"
+          echo "GITHUB_STEP_SUMMARY: ${{ github.step_summary }}"
+          echo "GITHUB_OUTPUT: ${{ github.output }}"
+          echo "GITHUB_PATH: ${{ github.path }}"
+          echo "GITHUB_TOKEN: ${{ github.token }}"
+          echo "GITHUB_REPOSITORY_ID: ${{ github.repository_id }}"
+          echo "GITHUB_REPOSITORY_OWNER_ID: ${{ github.repository_owner_id }}"
+          echo "GITHUB_ACTOR_ID: ${{ github.actor_id }}"
+          echo "GITHUB_TRIGGERING_ACTOR: ${{ github.triggering_actor }}"
+          echo "GITHUB_TRIGGERING_ACTOR_ID: ${{ github.triggering_actor_id }}"
+          echo "GITHUB_WORKFLOW_REF: ${{ github.workflow_ref }}"
+          echo "GITHUB_WORKFLOW_SHA: ${{ github.workflow_sha }}"
+          echo "GITHUB_JOB_ID: ${{ github.job_id }}"
+          echo "GITHUB_RETENTION_DAYS: ${{ github.retention_days }}"
+          echo "GITHUB_RUNNER_ARCH: ${{ github.runner_arch }}"
+          echo "GITHUB_RUNNER_OS: ${{ github.runner_os }}"
+          echo "GITHUB_RUNNER_NAME: ${{ github.runner_name }}"
+          echo "GITHUB_RUNNER_ENVIRONMENT: ${{ github.runner_environment }}"
+          echo "GITHUB_RUNNER_LABELS: ${{ github.runner_labels }}"
+          echo "GITHUB_RUNNER_GROUP: ${{ github.runner_group }}"
+          echo "GITHUB_RUNNER_TEMP: ${{ github.runner_temp }}"
+          echo "GITHUB_RUNNER_TOOL_CACHE: ${{ github.runner_tool_cache }}"
+          echo "GITHUB_RUNNER_WORKSPACE: ${{ github.runner_workspace }}"
