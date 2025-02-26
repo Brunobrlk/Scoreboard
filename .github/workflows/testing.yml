@@ -2,7 +2,8 @@ name: Testing
 
 on:
   push:
-    branches: [ "master" ]
+    tags:
+      - 'test[0-9]+.[0-9]+.[0-9]+'  # Matches vx.y.z format
   workflow_dispatch:
 
 jobs:
@@ -52,5 +53,4 @@ jobs:
           echo "GITHUB_RUNNER_LABELS: ${{ github.runner_labels }}"
           echo "GITHUB_RUNNER_GROUP: ${{ github.runner_group }}"
           echo "GITHUB_RUNNER_TEMP: ${{ github.runner_temp }}"
-          echo "GITHUB_RUNNER_TOOL_CACHE: ${{ github.runner_tool_cache }}"
           echo "GITHUB_RUNNER_WORKSPACE: ${{ github.runner_workspace }}"
