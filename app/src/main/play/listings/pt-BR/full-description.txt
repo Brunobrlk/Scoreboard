@@ -1,4 +1,0 @@
-- Aplicativo prático e leve para acompanhar a pontuação de partidas!
-- Personalize seus pontos: Você pode configurar quantos pontos adicionar por clique, ideal para adaptar o app a diversos tipos de jogos.
-- Defina o limite de pontuação: escolha a pontuação para vencer e acompanhe facilmente quem está na liderança.
-- Acessibilidade é uma das nossas prioridades, envie-nos um feedback caso precise de nossa ajuda.

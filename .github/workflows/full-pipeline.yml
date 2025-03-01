@@ -6,7 +6,6 @@ on:
 
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+'  # Matches x.y.z format
       - 'v[0-9]+.[0-9]+.[0-9]+'  # Matches vx.y.z format
 
   workflow_dispatch:
@@ -207,7 +206,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJson: app/dev-service-account.json
-          releaseName: ${{ steps.versionName.outputs.VERSION_NAME }}
+          releaseName: ${{ github.ref_name }}
           packageName: com.bgbrlk.scoreboardbrlk
           releaseFiles: outputs/bundle/release/*.aab
           track: internal

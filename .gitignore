@@ -12,6 +12,7 @@ dev-service-account.json
 local.properties
 *.base64
 loc_*
+listings
 
 # Keystore files
 *.jks
