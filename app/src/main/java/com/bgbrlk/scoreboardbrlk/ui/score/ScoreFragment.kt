@@ -21,6 +21,7 @@ import com.bgbrlk.scoreboardbrlk.R
 import com.bgbrlk.scoreboardbrlk.databinding.BottomsheetSettingsBinding
 import com.bgbrlk.scoreboardbrlk.databinding.DialogFinalScoreBinding
 import com.bgbrlk.scoreboardbrlk.databinding.FragmentScoreBinding
+import com.bgbrlk.scoreboardbrlk.helpers.Constants.FIVE_PERCENT
 import com.bgbrlk.scoreboardbrlk.helpers.DebugUtils
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
@@ -35,48 +36,53 @@ import kotlin.math.abs
 
 @AndroidEntryPoint
 class ScoreFragment : Fragment() {
-    private lateinit var _binding: FragmentScoreBinding
-    private val _viewModel: ScoreViewModel by viewModels()
+    private lateinit var binding: FragmentScoreBinding
+    private val viewModel: ScoreViewModel by viewModels()
 
-    private var _finalScoreDialog: AlertDialog? = null
-    private var _interstitialAd: InterstitialAd? = null
+    private var finalScoreDialog: AlertDialog? = null
+    private var interstitialAd: InterstitialAd? = null
 
-    private var _ignoreTopThreshold = 0f
-    private var _dragThreshold = 0f
-    private var _tapThreshold = 0f
-    private var _initialY = 0f
+    private var ignoreTopThreshold = 0f
+    private var dragThreshold = 0f
+    private var tapThreshold = 0f
+    private var initialY = 0f
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-        _binding = DataBindingUtil.inflate<FragmentScoreBinding?>(
-            inflater,
-            R.layout.fragment_score,
-            container,
-            false
-        ).apply {
-            scoreViewModel = _viewModel
-            lifecycleOwner = viewLifecycleOwner
-        }
+        binding =
+            DataBindingUtil
+                .inflate<FragmentScoreBinding?>(
+                    inflater,
+                    R.layout.fragment_score,
+                    container,
+                    false,
+                ).apply {
+                    scoreViewModel = viewModel
+                    lifecycleOwner = viewLifecycleOwner
+                }
         initLayout()
 
-        return _binding.root
+        return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        _finalScoreDialog?.dismiss()
+        finalScoreDialog?.dismiss()
     }
 
     private fun initLayout() {
-        ViewCompat.setOnApplyWindowInsetsListener(_binding.textviewHomeTitle) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.textviewHomeTitle) { v, insets ->
             val orientation = requireContext().resources.configuration.orientation
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                 val bars = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
@@ -84,127 +90,129 @@ class ScoreFragment : Fragment() {
                     left = bars.left,
                     top = bars.top,
                     right = bars.right,
-                    bottom = bars.bottom
+                    bottom = bars.bottom,
                 )
             }
             WindowInsetsCompat.CONSUMED
         }
-        _dragThreshold = ViewConfiguration.get(requireContext()).scaledVerticalScrollFactor
-        _tapThreshold = ViewConfiguration.get(requireContext()).scaledTouchSlop.toFloat()
-        _ignoreTopThreshold = getFivePercentOfScreen()
-        DebugUtils.reportDebug("Tap: $_tapThreshold and Drag: $_dragThreshold")
+        dragThreshold = ViewConfiguration.get(requireContext()).scaledVerticalScrollFactor
+        tapThreshold = ViewConfiguration.get(requireContext()).scaledTouchSlop.toFloat()
+        ignoreTopThreshold = getFivePercentOfScreen()
+        DebugUtils.reportDebug("Tap: $tapThreshold and Drag: $dragThreshold")
     }
 
-    private fun getFivePercentOfScreen() = resources.displayMetrics.heightPixels.toFloat()*0.05f
+    private fun getFivePercentOfScreen() = resources.displayMetrics.heightPixels.toFloat() * FIVE_PERCENT
 
     @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     private fun initListeners() {
-        _binding.apply {
+        binding.apply {
             viewLeftHalf.setOnTouchListener { _, event ->
-                handleTouch(event,
-                    onDecrement = { _viewModel.decrementTeam1() },
-                    onIncrement = { _viewModel.addPointTeam1() }
+                handleTouch(
+                    event,
+                    onDecrement = { viewModel.decrementTeam1() },
+                    onIncrement = { viewModel.addPointTeam1() },
                 )
             }
 
             viewRightHalf.setOnTouchListener { _, event ->
-                handleTouch(event,
-                    onDecrement = { _viewModel.decrementTeam2() },
-                    onIncrement = { _viewModel.addPointTeam2() }
+                handleTouch(
+                    event,
+                    onDecrement = { viewModel.decrementTeam2() },
+                    onIncrement = { viewModel.addPointTeam2() },
                 )
             }
 
             fabReload.setOnClickListener {
-                if (_viewModel.showAds()) showAdvertisement()
-                _viewModel.restartCounters()
+                if (viewModel.showAds()) showAd()
+                viewModel.restartCounters()
             }
 
             fabSettings.setOnClickListener {
                 val bottomSheetDialog = BottomSheetDialog(requireContext())
-                val bottomSheetBinding = BottomsheetSettingsBinding.inflate(layoutInflater).apply {
-                    val settingList = _viewModel.settingList.map { setting -> setting.copy() }
-                    val settingsAdapter = SettingsAdapter()
-                    val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-                    val spanCount = if (isLandscape) 2 else 1
-                    textviewVersion.text = "App Version: ${BuildConfig.VERSION_NAME}"
-                    recyclerSettings.layoutManager = GridLayoutManager(requireContext(), spanCount)
-                    recyclerSettings.adapter = settingsAdapter
-                    buttonSave.setOnClickListener {
-                        _viewModel.saveSettings(settingsAdapter.currentList)
-                        bottomSheetDialog.dismiss()
-                    }
+                val bottomSheetBinding =
+                    BottomsheetSettingsBinding.inflate(layoutInflater).apply {
+                        val settingList = viewModel.settingList.map { setting -> setting.copy() }
+                        val settingsAdapter = SettingsAdapter()
+                        val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                        val spanCount = if (isLandscape) 2 else 1
+                        textviewVersion.text = "App Version: ${BuildConfig.VERSION_NAME}"
+                        recyclerSettings.layoutManager = GridLayoutManager(requireContext(), spanCount)
+                        recyclerSettings.adapter = settingsAdapter
+                        buttonSave.setOnClickListener {
+                            viewModel.saveSettings(settingsAdapter.currentList)
+                            bottomSheetDialog.dismiss()
+                        }
 
-                    settingsAdapter.submitList(settingList)
-                }
-                bottomSheetDialog.apply {
-                    setContentView(bottomSheetBinding.root)
-                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                }.show()
+                        settingsAdapter.submitList(settingList)
+                    }
+                bottomSheetDialog
+                    .apply {
+                        setContentView(bottomSheetBinding.root)
+                        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    }.show()
             }
         }
 
-        _viewModel.finishingGame.observe(viewLifecycleOwner) { finishingGame ->
+        viewModel.finishingGame.observe(viewLifecycleOwner) { finishingGame ->
             if (finishingGame) {
                 disableCounters()
                 showFinalScoreDialog()
             }
         }
 
-        _viewModel.showAdvertisement.observe(viewLifecycleOwner) { showAdvertisement ->
+        viewModel.showAdvertisement.observe(viewLifecycleOwner) { showAdvertisement ->
             if (showAdvertisement) initAds()
         }
     }
 
-    private fun disableCounters() {
-        _binding.apply {
-            viewLeftHalf.isEnabled = false
-            viewRightHalf.isEnabled = false
-        }
-    }
-
     private fun showFinalScoreDialog() {
-        val binding = DialogFinalScoreBinding.inflate(layoutInflater).apply {
-            scoreViewModel = _viewModel
-        }
-        _finalScoreDialog = MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_App_FullWidthActionsDialog)
-            .setTitle(R.string.match_score)
-            .setCancelable(false)
-            .setView(binding.root)
-            .setNeutralButton(R.string.new_game){ dialog, _ ->
-                if (_viewModel.showAds() && _viewModel.isLongGame) showAdvertisement()
-                _viewModel.restartCounters()
-                enableCounters()
-                _viewModel.gameFinished()
-                dialog.dismiss()
-            }.show()
+        val binding =
+            DialogFinalScoreBinding.inflate(layoutInflater).apply {
+                scoreViewModel = viewModel
+            }
+        finalScoreDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_App_FullWidthActionsDialog)
+                .setTitle(R.string.match_score)
+                .setCancelable(false)
+                .setView(binding.root)
+                .setNeutralButton(R.string.new_game) { dialog, _ ->
+                    if (viewModel.showAds() && viewModel.isLongGame) showAd()
+                    viewModel.restartCounters()
+                    enableCounters()
+                    viewModel.gameFinished()
+                    dialog.dismiss()
+                }.show()
     }
 
     private fun enableCounters() {
-        _binding.apply {
-            viewLeftHalf.isEnabled = true
-            viewRightHalf.isEnabled = true
-        }
+        binding.viewLeftHalf.isEnabled = true
+        binding.viewRightHalf.isEnabled = true
+    }
+
+    private fun disableCounters() {
+        binding.viewLeftHalf.isEnabled = false
+        binding.viewRightHalf.isEnabled = false
     }
 
     private fun handleTouch(
         event: MotionEvent,
         onDecrement: () -> Unit,
-        onIncrement: () -> Unit
+        onIncrement: () -> Unit,
     ): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                _initialY = event.y
+                initialY = event.y
                 return true
             }
 
             MotionEvent.ACTION_UP -> {
-                val deltaY = event.y - _initialY
-                if (deltaY > _dragThreshold && _initialY > _ignoreTopThreshold) {
+                val deltaY = event.y - initialY
+                if (deltaY > dragThreshold && initialY > ignoreTopThreshold) {
                     onDecrement()
-                } else if(abs(deltaY) <= _tapThreshold){
+                } else if (abs(deltaY) <= tapThreshold) {
                     onIncrement()
                 }
-                DebugUtils.reportDebug("Initial: $_initialY and final ${event.y} and delta: $deltaY")
+                DebugUtils.reportDebug("Initial: $initialY and final ${event.y} and delta: $deltaY")
                 return true
             }
 
@@ -214,33 +222,34 @@ class ScoreFragment : Fragment() {
 
     private fun initAds() {
         MobileAds.initialize(requireContext())
-        loadAdvertisement()
+        loadNewAd()
     }
 
-    private fun loadAdvertisement() {
+    private fun loadNewAd() {
         DebugUtils.reportDebug("Loading Advertisement")
         val adRequest = AdRequest.Builder().build()
-        val interstitialAdLoadCallback = object : InterstitialAdLoadCallback() {
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                _interstitialAd = null
-            }
+        val interstitialAdLoadCallback =
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    interstitialAd = null
+                }
 
-            override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                _interstitialAd = interstitialAd
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    this@ScoreFragment.interstitialAd = interstitialAd
+                }
             }
-        }
 
         InterstitialAd.load(
             requireContext(),
             BuildConfig.INTERSTITIAL_AD_UNIT_ID,
             adRequest,
-            interstitialAdLoadCallback
+            interstitialAdLoadCallback,
         )
     }
 
-    private fun showAdvertisement() {
-        _interstitialAd?.show(requireActivity())
+    private fun showAd() {
+        interstitialAd?.show(requireActivity())
             ?: DebugUtils.reportDebug("Advertisement not loaded")
-        loadAdvertisement()
+        loadNewAd()
     }
 }

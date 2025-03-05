@@ -8,4 +8,3 @@ data class Setting(
     @DrawableRes val icon: Int,
     var value: Int,
 )
-

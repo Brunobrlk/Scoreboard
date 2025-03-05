@@ -28,7 +28,7 @@ android {
     }
 
     signingConfigs {
-        create("release"){
+        create("release") {
             storeFile = file(project.property("RELEASE_STORE_FILE") as String)
             storePassword = project.property("RELEASE_STORE_PASSWORD") as String
             keyAlias = project.property("RELEASE_KEY_ALIAS") as String
@@ -57,6 +57,32 @@ android {
     buildFeatures {
         dataBinding = true
         buildConfig = true
+    }
+
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        animationsDisabled = true
+
+        managedDevices {
+            localDevices {
+                create("pixel2api30") {
+                    device = "Pixel 2"
+                    apiLevel = 30
+                    systemImageSource = "aosp-atd"
+                }
+                create("pixel2api31") {
+                    device = "Pixel 2"
+                    apiLevel = 31
+                    systemImageSource = "aosp-atd"
+                }
+            }
+            groups {
+                create("basicDevices") {
+                    targetDevices.add(devices["pixel2api30"])
+                    targetDevices.add(devices["pixel2api31"])
+                }
+            }
+        }
     }
 
     ndkVersion = "27.0.11718014 rc1"
@@ -122,7 +148,8 @@ tasks.register<Zip>("zipSymbols") {
     group = "build"
     description = "Zips the merged native libs into symbols.zip."
 
-    val outputDir = file("${project.projectDir}/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib")
+    val outDir =
+        file("${project.projectDir}/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib")
     val baseName = getCustomVersionName()
     val symbolsZipName = "$baseName-symbols.zip"
     val outputZip = file("${project.projectDir}/release/$symbolsZipName")
@@ -130,12 +157,12 @@ tasks.register<Zip>("zipSymbols") {
     destinationDirectory.set(outputZip.parentFile)
     archiveFileName.set(outputZip.name)
 
-    from(outputDir) {
+    from(outDir) {
         include("**/*") // Include all files and directories under 'lib'
     }
 }
 
-afterEvaluate{
+afterEvaluate {
     tasks.named("bundleRelease").configure {
         finalizedBy("zipSymbols")
     }
@@ -145,14 +172,13 @@ fun getVersionCode(): Int {
     val versionName = android.defaultConfig.versionName ?: ""
     val versionRegex = """^(\d+)\.(\d+)\.(\d+)""".toRegex()
     val matchResult = versionRegex.find(versionName)
-    val (major, minor, patch) = matchResult?.destructured ?: error("Invalid version format")
+    val (majorStr, minorStr, patchStr) = matchResult?.destructured ?: error("Invalid version format")
 
-    val patchMultiplier = 1
-    val minorMultiplier = 1000
-    val majorMultiplier = 1000000
-    val versionCode = (patchMultiplier*patch.toInt()) + (minorMultiplier * minor.toInt()) + (majorMultiplier * major.toInt())
+    val patch = patchStr.toInt()
+    val minor = minorStr.toInt() * 1_000
+    val major = majorStr.toInt() * 1_000_000
 
-    return versionCode
+    return patch + minor + major
 }
 
 fun getCustomVersionName(): String {
@@ -161,5 +187,5 @@ fun getCustomVersionName(): String {
     val versionCode = android.defaultConfig.versionCode
     val date = SimpleDateFormat("yyyy-MM-dd").format(Date())
 
-    return "${appName}_${date}_v${versionName}-${versionCode}"
+    return "${appName}_${date}_v$versionName-$versionCode"
 }

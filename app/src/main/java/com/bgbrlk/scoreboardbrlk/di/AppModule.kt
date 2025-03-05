@@ -2,12 +2,12 @@ package com.bgbrlk.scoreboardbrlk.di
 
 import android.content.Context
 import com.bgbrlk.scoreboardbrlk.data.DatastoreHelper
-import com.bgbrlk.scoreboardbrlk.data.remote.AdminSettings
+import com.bgbrlk.scoreboardbrlk.data.local.DatastoreLocalSettings
 import com.bgbrlk.scoreboardbrlk.data.local.LocalSettings
+import com.bgbrlk.scoreboardbrlk.data.remote.AdminSettings
 import com.bgbrlk.scoreboardbrlk.data.remote.FirebaseAdminSettings
 import com.bgbrlk.scoreboardbrlk.domain.repository.AppSettings
 import com.bgbrlk.scoreboardbrlk.domain.repository.AppSettingsRepository
-import com.bgbrlk.scoreboardbrlk.data.local.DatastoreLocalSettings
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +22,7 @@ object AppModule {
     @Provides
     fun providesAppSettings(
         datastoreLocalSettings: LocalSettings,
-        firebaseAdminSettings: AdminSettings
+        firebaseAdminSettings: AdminSettings,
     ): AppSettings = AppSettingsRepository(datastoreLocalSettings, firebaseAdminSettings)
 
     @Singleton
@@ -31,11 +31,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun providesDatastoreLocalSettings(
-        datastoreHelper: DatastoreHelper
-    ): LocalSettings = DatastoreLocalSettings(datastoreHelper)
+    fun providesDatastoreLocalSettings(datastoreHelper: DatastoreHelper): LocalSettings = DatastoreLocalSettings(datastoreHelper)
 
     @Singleton
     @Provides
-    fun providesDatastoreHelper(@ApplicationContext context: Context): DatastoreHelper = DatastoreHelper(context)
+    fun providesDatastoreHelper(
+        @ApplicationContext context: Context,
+    ): DatastoreHelper = DatastoreHelper(context)
 }
