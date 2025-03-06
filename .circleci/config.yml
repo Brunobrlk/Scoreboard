@@ -1,11 +1,5 @@
 version: 2.1
 
-filters:
-  branches:
-    ignore: /.*/
-  tags:
-    only: /^v\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format vX.Y.Z
-
 jobs:
   lint:
     docker:
@@ -114,11 +108,11 @@ jobs:
           paths:
             - ~/.gradle/caches
       - persist_to_workspace:
-          root: .
+          root: app/build
           paths:
-            - app/build/outputs/apk/release
-            - app/build/outputs/bundle/release
-            - app/build/outputs/bundle/*.aab
+            - outputs/apk/release
+            - outputs/bundle/release
+            - outputs/bundle/*.aab
 
   deploy:
     docker:
@@ -126,10 +120,10 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: workspace
+          at: app
       - run:
           name: Setup environment
-          command: chmod +x setup_environment && ./setup_environment
+          command: chmod +x setup_environment && ./setup_environment && tree -L 5
       - run:
           name: Upload to Google Play
           command: ./gradlew publishReleaseBundle

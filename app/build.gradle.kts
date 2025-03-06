@@ -134,7 +134,7 @@ play {
     defaultToAppBundles.set(true)
 
     // Circleci workspace integration
-    artifactDir.set(file("../workspace/app/build/outputs/bundle/release"))
+    artifactDir.set(file("build/outputs/bundle/release"))
 
     // internal/alpha/beta/production
     track.set("internal")
