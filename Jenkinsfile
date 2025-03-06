@@ -1,34 +1,59 @@
 pipeline {
     agent any
+    
+    environment {
+        RELEASE_KEY = credentials('RELEASE_KEY')
+        LOCAL_PROPERTIES = credentials('LOCAL_PROPERTIES')
+        GRADLE_PROPERTIES = credentials('GRADLE_PROPERTIES')
+        GOOGLE_SERVICES = credentials('GOOGLE_SERVICES')
+        DEV_SERVICE_ACCOUNT = credentials('DEV_SERVICE_ACCOUNT')
+        ANDROID_HOME = '/var/jenkins_home/Sdk'
+    }
+    
     stages {
-        stage("lint"){
+        stage("Setup Environment"){
             steps {
-                echo 'Lint check...'
-            }
-        }
-        
-        stage("unit-test"){
-            steps {
-                echo 'Running unit tests...'
+                sh './setup_environment'
             }
         }
 
-        stage("integration-test"){
+        stage("Lint"){
             steps {
-                echo 'Running integration tests...'
+                sh './setup_environment'
             }
         }
         
-        stage("build"){
+        stage("Unit Tests"){
             steps {
-                echo 'Building the app...'
+                sh './gradlew testReleaseUnitTest'
             }
         }
 
-        stage("deploy-to-playstore"){
+        /*
+        stage("Integration Tests"){
             steps {
-                echo 'building the app...'
+                sh './gradlew basicDevicesGroupAndroidTest'
+            }
+        }
+        */
+        
+        stage("Build Apk"){
+            steps {
+                sh './gradlew assembleRelease'
+            }
+        }
+
+        stage("Build AAB"){
+            steps {
+                sh './gradlew bundleRelease'
+            }
+        }
+
+        stage("Deploy to Playstore"){
+            steps {
+                sh './gradlew publishReleaseBundle'
             }
         }
     }
 }
+
