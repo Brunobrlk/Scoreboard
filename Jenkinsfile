@@ -22,7 +22,7 @@ pipeline {
                 sh './gradlew lintRelease'
             }
         }
-        
+
         stage("Unit Tests"){
             steps {
                 sh './gradlew testReleaseUnitTest'
@@ -38,8 +38,9 @@ pipeline {
         }
         */
         
-        stage("Build Apk"){
+        stage("Build APK"){
             steps {
+                sh './gradlew clean'
                 sh './gradlew assembleRelease'
             }
         }
@@ -50,11 +51,20 @@ pipeline {
             }
         }
 
-        stage("Deploy to Playstore"){
+        stage("Play Store Deploy"){
             steps {
                 sh './gradlew publishReleaseBundle'
             }
         }
+
+        /*
+        stage("Amazon App Store"){
+            steps {}
+        }
+        stage("Huawei App Gallery"){
+            steps {}
+        }
+        */
     }
 }
 
