@@ -1,9 +1,17 @@
 version: 2.1
 
-jobs:
-  lint:
+executors:
+  docker-android:
     docker:
       - image: cimg/android:2025.02.1
+
+orbs:
+  android: circleci/android@3.1.0
+
+jobs:
+  # Done
+  lint:
+    executor: docker-android
     steps:
       - checkout
       - run:
@@ -12,15 +20,14 @@ jobs:
       - restore_cache:
           key: cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}
       - run:
-          name: Lint Release Only
+          name: Lint Release
           command: ./gradlew lintRelease
       - store_artifacts:
           path: app/build/reports
 
-  # Unit Test
-  unit-test:
-    docker:
-      - image: cimg/android:2025.02.1
+  # Done
+  unit-tests:
+    executor: docker-android
     steps:
       - checkout
       - run:
@@ -38,55 +45,10 @@ jobs:
           paths:
             - ~/.gradle/caches
 
-  test-android:
-    docker:
-      - image: cimg/android:2025.02.1
-    steps:
-      - checkout
-      - run:
-          name: Setup environment
-          command: chmod +x setup_environment && ./setup_environment
-      - run:
-          name: Start Emulator
-          command: |
-            sdkmanager "system-images;android-30;google_apis;x86_64"
-            echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64"
-            nohup emulator -avd testAVD -no-audio -no-window &
-      - run:
-          name: Wait for Emulator
-          command: |
-            sleep 60
-            adb shell input keyevent 82
-      - run:
-          name: Run Instrumented Tests
-          command: ./gradlew connectedReleaseAndroidTest
-      - store_test_results:
-          path: app/build/outputs/androidTest-results
-
-  firebase-test:
-    docker:
-      - image: google/cloud-sdk
-    steps:
-      - checkout
-      - run:
-          name: Install Firebase CLI
-          command: curl -sL https://firebase.tools | bash
-      - run:
-          name: Firebase Test Lab - Run Matrix
-          command: |
-            gcloud auth activate-service-account --key-file=app/dev-service-account.json
-            gcloud --quiet config set project scoreboardbrlk
-            gcloud firebase test android run \
-              --type instrumentation \
-              --app app/build/outputs/bundle/release/app-release.aab \
-              --test app/build/outputs/bundle/release/app-release.aab \
-              --device model=Pixel2,version=30,locale=en,orientation=portrait \
-              --device model=Nexus6,version=28,locale=en,orientation=landscape \
-              --timeout 15m
-
-  build-release:
-    docker:
-      - image: cimg/android:2025.02.1
+  # In progress
+  # - Test persist to workspace
+  build:
+    executor: docker-android
     steps:
       - checkout
       - run:
@@ -114,39 +76,71 @@ jobs:
             - outputs/bundle/release
             - outputs/bundle/*.aab
 
+  # In progress
+  # - Retrieve build from workspace
   deploy:
-    docker:
-      - image: cimg/android:2025.02.1
+    executor: docker-android
     steps:
       - checkout
       - attach_workspace:
           at: app
       - run:
+          name: Debug
+          command: apt-get install tree && tree
+      - run:
           name: Setup environment
-          command: chmod +x setup_environment && ./setup_environment && tree -L 5
+          command: chmod +x setup_environment && ./setup_environment
       - run:
           name: Upload to Google Play
           command: ./gradlew publishReleaseBundle
       - store_artifacts:
           path: workspace
 
+# In progress
+# - Logic to trigger full-pipeline in tag pushes
 workflows:
-  test-and-deploy:
+  full-pipeline:
     jobs:
       - lint
-      - unit-test
-#      - test-android
-#      - firebase-test
-      - build-release:
+      - unit-tests
+      - android/run_ui_tests:
+          executor:
+            name: android/android_machine
+            resource_class: large
+            tag: default
+
+          pre_test_command: 'chmod +x setup_environment && ./setup_environment'
+
+          pre_emulator_wait_steps:
+            - run:
+                name: Setupbrlk
+                command: |
+                  chmod +x setup_environment
+                  ./setup_environment
+
+          pre_run_tests_steps:
+            - run:
+                name: Setupbrlk
+                command: |
+                  chmod +x setup_environment
+                  ./setup_environment
+
+          matrix:
+            parameters:
+              system_image:
+                - system-images;android-30;default;x86_64
+                - system-images;android-29;default;x86_64
+          name: ui-tests-<<matrix.system_image>>
+      - build:
           requires:
-            - unit-test
-#            - test-android
-#            - firebase-test
+            - unit-tests
+            - lint
+            - android/run_ui_tests
+      - deploy:
+          requires:
+            - build
           filters:
             branches:
               ignore: /.*/
             tags:
               only: /^v\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format vX.Y.Z
-      - deploy:
-          requires:
-            - build-release
