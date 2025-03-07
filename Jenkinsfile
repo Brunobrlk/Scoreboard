@@ -19,7 +19,7 @@ pipeline {
 
         stage("Lint"){
             steps {
-                sh './setup_environment'
+                sh './gradlew lintRelease'
             }
         }
         
@@ -30,6 +30,7 @@ pipeline {
         }
 
         /*
+        Out of scope. Maybe setup dedicated containers for emulators?
         stage("Integration Tests"){
             steps {
                 sh './gradlew basicDevicesGroupAndroidTest'
