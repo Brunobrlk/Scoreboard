@@ -1,6 +1,6 @@
 # Scoreboard Lite
 
-Scoreboard Android App using kotlin + MVVM, Material3, Data Binding, Live Data, Datastore, Coroutines, DaggerHilt, Firebase(Analytics, Crashlytics, RemoteConfig, Performance), AdMob, Navigation UI, local tests - JUnit, instrumented tests - Espresso and CI/CD with CircleCI + Gradle Play Plugin(GPP)
+Scoreboard Android App using kotlin + MVVM, Material3, Data Binding, Live Data, Datastore, Coroutines, DaggerHilt, Firebase(Analytics, Crashlytics, RemoteConfig, Performance), AdMob, Navigation UI, local tests - JUnit, instrumented tests - Espresso and CI/CD with CircleCI + Gradle Play Plugin(GPP), Github Actions and Jenkins
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/circleci/Fzxtge7y4mRCi4CnqUZj2X/DDJNEcHTQ63HataPVnExAU/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/Fzxtge7y4mRCi4CnqUZj2X/DDJNEcHTQ63HataPVnExAU/tree/master)
 ![UnitTests](https://img.shields.io/github/actions/workflow/status/Brunobrlk/Scoreboard/build-and-test.yml?logo=githubactions&logoColor=FFFFFF&label=Unit%20Tests)
