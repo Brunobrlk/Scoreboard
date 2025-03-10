@@ -46,14 +46,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
     buildFeatures {
         dataBinding = true
         buildConfig = true
@@ -86,6 +78,16 @@ android {
     }
 
     ndkVersion = "27.0.11718014 rc1"
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 dependencies {
