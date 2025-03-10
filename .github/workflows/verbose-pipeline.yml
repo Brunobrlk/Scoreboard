@@ -1,0 +1,332 @@
+name: Testing Workflow Name
+
+# All Jobs
+# ================================
+# [x] Lint
+# [x] Unit Test
+# [x] Integration Test
+# [x] Build APK
+# [x] Build AAB
+# [x] Deploy to Play Store
+# [x] Deploy to Amazon App Store
+# [x] Deploy to Huawei App Gallery
+# [x] Debug Variables
+# [] Firebase Distribution
+# [] Firebase Test Lab
+# [] Slack Notification
+# [] Send Email
+# [] Discord Notification
+# [] Jira Integration
+# [] Upload to Waldo
+# [] Upload to BrowserStack
+# [] Security checks - AppSweep
+# [] Detekt
+# [] SonarQube
+# [] Jacoco
+# [] CodeCov
+# [] KtLint
+# [] Dependency Scanning
+# [] Performance
+
+on:
+  workflow_dispatch:
+
+env:
+  GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+  DEV_SERVICE_ACCOUNT: ${{ secrets.DEV_SERVICE_ACCOUNT }}
+  RELEASE_KEY: ${{ secrets.RELEASE_KEY }}
+  GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+  LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          chmod +x setup_environment
+          ./setup_environment
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Lint check
+        run: ./gradlew lintRelease
+
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          chmod +x setup_environment
+          ./setup_environment
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Run Unit Tests
+        run: ./gradlew testReleaseUnitTest
+
+      - name: Store test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-report
+          path: app/build/reports/tests
+
+  integration-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          chmod +x setup_environment
+          ./setup_environment
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: ./gradlew connectedCheck
+
+      - name: Store test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-test-report
+          path: app/build/reports/androidTests
+
+  build-apk:
+    runs-on: ubuntu-latest
+    needs: [lint, unit-test, integration-test]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          chmod +x setup_environment
+          ./setup_environment
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Generate release APK
+        run: ./gradlew assembleRelease
+
+      - name: Store AAB and APK files
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-artifacts
+          path: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/mapping/release/mapping.txt
+            app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib
+
+  build-aab:
+    runs-on: ubuntu-latest
+    needs: [lint, unit-test, integration-test]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          chmod +x setup_environment
+          ./setup_environment
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Generate release AAB
+        run: ./gradlew bundleRelease
+
+      - name: Store AAB and APK files
+        uses: actions/upload-artifact@v4
+        with:
+          name: aab-artifacts
+          path: |
+            app/build/outputs/bundle/release/*.aab
+            app/build/outputs/mapping/release/mapping.txt
+            app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib
+
+  deploy-playstore:
+    runs-on: ubuntu-latest
+    needs: build-aab
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          chmod +x setup_environment
+          ./setup_environment
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: aab-artifacts
+
+      - name: Get Version
+        id: versionName
+        run: echo VERSION_NAME="v$(grep 'versionName =' build.gradle.kts | head -1 | awk -F\" '{ print $2 }')" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: app/dev-service-account.json
+          releaseName: ${{ github.ref_name }}
+          packageName: com.bgbrlk.scoreboardbrlk
+          releaseFiles: outputs/bundle/release/*.aab
+          track: internal
+          status: completed
+          whatsNewDirectory: distribution/whatsnew
+          mappingFile: outputs/mapping/release/mapping.txt
+          debugSymbols: intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib
+
+  deploy-amazon-appstore:
+    runs-on: ubuntu-latest
+    needs: build-apk
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk-artifacts
+
+      - name: Get APK name
+        id: get_apk_name
+        run: |
+          APK_PATH=$(ls outputs/apk/release/*.apk | head -1)
+          echo "APK_NAME=$APK_PATH" >> $GITHUB_OUTPUT
+
+      - name: Upload to Amazon App Store
+        uses: AmeyaJain-25/amazon-appstore-app-upload@v1.0.0
+        with:
+          client_id: ${{secrets.AMAZON_APPSTORE_CLIENT_ID}}
+          client_secret: ${{secrets.AMAZON_APPSTORE_CLIENT_SECRET}}
+          app_id: ${{ secrets.AMAZON_APPSTORE_APP_ID }}
+          apk_release_file: ${{ steps.get_apk_name.outputs.APK_NAME }}
+
+  deploy-huawei:
+    runs-on: ubuntu-latest
+    needs: build-aab
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: aab-artifacts
+
+      - name: Get AAB name
+        id: get_aab_name
+        run: |
+          AAB_PATH=$(ls outputs/bundle/release/*.aab | head -1)
+          echo "AAB_NAME=$AAB_PATH" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Huawei App Gallery
+        uses: kienlv58/appgallery-deply-action@main
+        with:
+          client-id: ${{secrets.HUAWEI_CLIENT_ID}}
+          client-key: ${{secrets.HUAWEI_CLIENT_KEY}}
+          app-id: ${{secrets.HUAWEI_APP_ID}}
+          file-extension: "aab"
+          file-path: ${{ steps.get_aab_name.outputs.AAB_NAME }}
+          submit: true
+
+  debug-variables:
+    name: Debug Variables Job Name
+    runs-on: ubuntu-latest
+    steps:
+      - name: Available Variables
+        run: |
+          echo "GITHUB_REF_NAME: ${{ github.ref_name }}"
+          echo "GITHUB_REF: ${{ github.ref }}"
+          echo "GITHUB_SHA: ${{ github.sha }}"
+          echo "GITHUB_REPOSITORY: ${{ github.repository }}"
+          echo "GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}"
+          echo "GITHUB_RUN_ID: ${{ github.run_id }}"
+          echo "GITHUB_RUN_NUMBER: ${{ github.run_number }}"
+          echo "GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}"
+          echo "GITHUB_ACTOR: ${{ github.actor }}"
+          echo "GITHUB_WORKFLOW: ${{ github.workflow }}"
+          echo "GITHUB_ACTION: ${{ github.action }}"
+          echo "GITHUB_EVENT_NAME: ${{ github.event_name }}"
+          echo "GITHUB_EVENT_PATH: ${{ github.event_path }}"
+          echo "GITHUB_WORKSPACE: ${{ github.workspace }}"
+          echo "GITHUB_HEAD_REF: ${{ github.head_ref }}"
+          echo "GITHUB_BASE_REF: ${{ github.base_ref }}"
+          echo "GITHUB_SERVER_URL: ${{ github.server_url }}"
+          echo "GITHUB_API_URL: ${{ github.api_url }}"
+          echo "GITHUB_GRAPHQL_URL: ${{ github.graphql_url }}"
+          echo "GITHUB_JOB: ${{ github.job }}"
+          echo "GITHUB_ENV: ${{ github.env }}"
+          echo "GITHUB_STEP_SUMMARY: ${{ github.step_summary }}"
+          echo "GITHUB_OUTPUT: ${{ github.output }}"
+          echo "GITHUB_PATH: ${{ github.path }}"
+          echo "GITHUB_TOKEN: ${{ github.token }}"
+          echo "GITHUB_REPOSITORY_ID: ${{ github.repository_id }}"
+          echo "GITHUB_REPOSITORY_OWNER_ID: ${{ github.repository_owner_id }}"
+          echo "GITHUB_ACTOR_ID: ${{ github.actor_id }}"
+          echo "GITHUB_TRIGGERING_ACTOR: ${{ github.triggering_actor }}"
+          echo "GITHUB_TRIGGERING_ACTOR_ID: ${{ github.triggering_actor_id }}"
+          echo "GITHUB_WORKFLOW_REF: ${{ github.workflow_ref }}"
+          echo "GITHUB_WORKFLOW_SHA: ${{ github.workflow_sha }}"
+          echo "GITHUB_JOB_ID: ${{ github.job_id }}"
+          echo "GITHUB_RETENTION_DAYS: ${{ github.retention_days }}"
+          echo "GITHUB_RUNNER_ARCH: ${{ github.runner_arch }}"
+          echo "GITHUB_RUNNER_OS: ${{ github.runner_os }}"
+          echo "GITHUB_RUNNER_NAME: ${{ github.runner_name }}"
+          echo "GITHUB_RUNNER_ENVIRONMENT: ${{ github.runner_environment }}"
+          echo "GITHUB_RUNNER_LABELS: ${{ github.runner_labels }}"
+          echo "GITHUB_RUNNER_GROUP: ${{ github.runner_group }}"
+          echo "GITHUB_RUNNER_TEMP: ${{ github.runner_temp }}"
+          echo "GITHUB_RUNNER_WORKSPACE: ${{ github.runner_workspace }}"
