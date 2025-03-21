@@ -1,9 +1,6 @@
 package com.bgbrlk.scoreboardbrlk.ui.score
 
-import android.view.View
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -18,7 +15,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class ScoreFragmentTest {
-
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
@@ -27,7 +23,7 @@ class ScoreFragmentTest {
         onView(withId(R.id.textview_counter_team1))
             .check(matches(withText("0")))
 
-        repeat(5){
+        repeat(5) {
             onView(withId(R.id.textview_counter_team1))
                 .perform(click())
         }
@@ -43,7 +39,7 @@ class ScoreFragmentTest {
 
         scoreTeam1TextView.check(matches(withText("0")))
 
-        repeat(5){
+        repeat(5) {
             scoreTeam1Area.perform(click())
         }
 
@@ -55,7 +51,7 @@ class ScoreFragmentTest {
         val scoreTeam1TextView = onView(withId(R.id.textview_counter_team1))
         val scoreTeam2TextView = onView(withId(R.id.textview_counter_team2))
 
-        repeat(15){
+        repeat(15) {
             scoreTeam1TextView.perform(click())
         }
 
@@ -67,37 +63,41 @@ class ScoreFragmentTest {
 
     @Test
     fun fabReload_resetScores_whenClicked() {
-        val scoreTeam1TextView = onView(withId(R.id.textview_counter_team1))
-        val scoreTeam2TextView = onView(withId(R.id.textview_counter_team2))
+        val scoreTeam1Area = onView(withId(R.id.view_left_half))
+        val scoreTeam2Area = onView(withId(R.id.view_right_half))
         val fabReload = onView(withId(R.id.fab_reload))
 
-        repeat(5){
-            scoreTeam1TextView.perform(click())
-            scoreTeam2TextView.perform(click())
-            scoreTeam2TextView.perform(click())
+        repeat(5) {
+            scoreTeam1Area.perform(click())
+            scoreTeam2Area.perform(click())
+            scoreTeam2Area.perform(click())
         }
 
         fabReload.perform(click())
 
+        val scoreTeam1TextView = onView(withId(R.id.textview_counter_team1))
+        val scoreTeam2TextView = onView(withId(R.id.textview_counter_team2))
         scoreTeam1TextView.check(matches(withText("0")))
         scoreTeam2TextView.check(matches(withText("0")))
     }
 
-//    Failing: Tip - The only fab using databinding instead of click listener is fabFlip.
+//     I might get answers about this issue when i finish my course
 //    @Test
 //    fun fabFlip_switchScores_whenClicked() {
+//        val scoreTeam1Area = onView(withId(R.id.view_left_half))
+//        val scoreTeam2Area = onView(withId(R.id.view_right_half))
+//
+//        repeat(5) {
+//            scoreTeam1Area.perform(click())
+//        }
+//        onView(withId(R.id.fab_flip)).perform(click())
+//        repeat(10) {
+//            scoreTeam2Area.perform(click())
+//        }
+//        onView(withId(R.id.fab_flip)).perform(click())
+//
 //        val scoreTeam1TextView = onView(withId(R.id.textview_counter_team1))
 //        val scoreTeam2TextView = onView(withId(R.id.textview_counter_team2))
-//
-//        repeat(5){
-//            scoreTeam1TextView.perform(click())
-//        }
-//        onView(withId(R.id.fab_flip)).perform(click())
-//        repeat(10){
-//            scoreTeam2TextView.perform(click())
-//        }
-//        onView(withId(R.id.fab_flip)).perform(click())
-//
 //
 //        scoreTeam1TextView.check(matches(withText("10")))
 //        scoreTeam2TextView.check(matches(withText("5")))

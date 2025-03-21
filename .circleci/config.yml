@@ -109,10 +109,11 @@ workflows:
             resource_class: large
             tag: default
 
-          post_emulator_launch_assemble_command: |
-            chmod +x setup_environment
-            ./setup_environment
-            ./gradlew assembleDebugAndroidTest
+          # post_emulator_launch_assemble_command: |
+          #   chmod +x setup_environment
+          #   ./setup_environment
+          #   ./gradlew assembleDebugAndroidTest
+          post_emulator_launch_assemble_command: ""
 
           matrix:
             parameters:

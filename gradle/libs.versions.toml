@@ -22,6 +22,7 @@ playServicesAds = "23.6.0"
 google-services = "4.4.2"
 crashlytics = "3.0.2"
 rules = "1.6.1"
+fragmentTesting = "1.8.6"
 
 [libraries]
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
@@ -47,6 +48,7 @@ play-services-ads = { module = "com.google.android.gms:play-services-ads-lite", 
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-perf = { module = "com.google.firebase:firebase-perf" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
+androidx-fragment-testing = { group = "androidx.fragment", name = "fragment-testing", version.ref = "fragmentTesting" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
