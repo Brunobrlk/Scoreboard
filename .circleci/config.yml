@@ -109,21 +109,10 @@ workflows:
             resource_class: large
             tag: default
 
-          pre_test_command: 'chmod +x setup_environment && ./setup_environment'
-
-          pre_emulator_wait_steps:
-            - run:
-                name: Setupbrlk
-                command: |
-                  chmod +x setup_environment
-                  ./setup_environment
-
-          pre_run_tests_steps:
-            - run:
-                name: Setupbrlk
-                command: |
-                  chmod +x setup_environment
-                  ./setup_environment
+          post_emulator_launch_assemble_command: |
+            chmod +x setup_environment
+            ./setup_environment
+            ./gradlew assembleDebugAndroidTest
 
           matrix:
             parameters:
