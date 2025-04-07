@@ -29,6 +29,10 @@ Scoreboard Android App using kotlin + MVVM, Material3, Data Binding, Live Data, 
 ### CI/CD Pipeline - Jenkins
 <img src="screenshots/ci_cd_jenkins.png" style="min-height: 200px;" alt="Jenkins CI/CD screenshot">
 
+### CI/CD Pipeline - CircleCI
+<img src="screenshots/ci_cd_circleci.png" style="min-height: 200px;" alt="CircleCI CI/CD screenshot">
+
+
 **Aptoide**, **Uptodown** and **APKPure** are linked to **Play Store**. They are automatically updated once the _deploy-playstore_ job completes.
 
 ## Features
