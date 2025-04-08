@@ -90,16 +90,8 @@ jobs:
 workflows:
   full-pipeline:
     jobs:
-      - lint:
-          filters:
-            tags:
-              only: /^v\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format vX.Y.Z
-
-      - unit-tests:
-          filters:
-            tags:
-              only: /^v\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format vX.Y.Z
-
+      - lint
+      - unit-tests
       - android/run_ui_tests:
           executor:
             name: android/android_machine
@@ -117,22 +109,11 @@ workflows:
                 - system-images;android-30;default;x86_64
                 - system-images;android-29;default;x86_64
           name: ui-tests-<<matrix.system_image>>
-          filters:
-            tags:
-              only: /^v\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format vX.Y.Z
-
       - build:
           requires:
             - unit-tests
             - lint
             - android/run_ui_tests
-          filters:
-            tags:
-              only: /^v\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format vX.Y.Z
-
       - deploy:
           requires:
             - build
-          filters:
-            tags:
-              only: /^v\d+\.\d+\.\d+$/  # Deploy only if there's a tag in format vX.Y.Z
