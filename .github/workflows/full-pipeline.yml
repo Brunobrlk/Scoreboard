@@ -4,10 +4,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
-  # push:
-  #   tags:
-  #     - 'v[0-9]+.[0-9]+.[0-9]+'  # Matches vx.y.z format
-  #     DESACTIVATED - REACTIVATE AFTER TESTING CIRCLECI
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'  # Matches vx.y.z format
 
   workflow_dispatch:
 
