@@ -21,4 +21,5 @@
     <string name="decrease_value_button_description">Diminuir valor do %1$s</string>
     <string name="touch_area_home_team_description">Placar Casa é %1$s. Adicionar pontos</string>
     <string name="touch_area_guest_team_description">Placar Fora é %1$s. Adicionar pontos</string>
+    <string name="textview_read_our_privacy_policy">Leia nossos Termos de Privacidade</string>
 </resources>

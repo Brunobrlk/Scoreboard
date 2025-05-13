@@ -47,7 +47,10 @@ class ScoreViewModel
 
         val isLongGame: Boolean
             get() =
-                (_counterTeam1.value ?: 0) + (_counterTeam2.value ?: 0) >=
+                (
+                    _counterTeam1.value
+                        ?: 0
+                ) + (_counterTeam2.value ?: 0) >=
                     (pointsToWin.value ?: POINTS_TO_WIN) * HALF_MORE
 
         init {
@@ -57,8 +60,16 @@ class ScoreViewModel
 
                 _settingList =
                     arrayListOf(
-                        Setting(R.string.points_to_win, R.drawable.ic_crown, pointsToWin.value ?: POINTS_TO_WIN),
-                        Setting(R.string.points_on_tap, R.drawable.ic_plus, pointsOnTap.value ?: 1),
+                        Setting(
+                            R.string.points_to_win,
+                            R.drawable.ic_crown,
+                            pointsToWin.value ?: POINTS_TO_WIN,
+                        ),
+                        Setting(
+                            R.string.points_on_tap,
+                            R.drawable.ic_plus,
+                            pointsOnTap.value ?: 1,
+                        ),
                     )
 
                 _showAdvertisement.value = appSettings.showAds()
@@ -105,9 +116,7 @@ class ScoreViewModel
 
         private fun releaseAccess() {
             _showAdvertisement.value = false
-            viewModelScope.launch {
-                appSettings.setShowAds(false)
-            }
+            viewModelScope.launch { appSettings.setShowAds(false) }
         }
 
         fun restartCounters() {

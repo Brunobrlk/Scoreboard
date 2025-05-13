@@ -1,6 +1,7 @@
 package com.bgbrlk.scoreboardbrlk.ui.score
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -135,7 +137,12 @@ class ScoreFragment : Fragment() {
                         val settingsAdapter = SettingsAdapter()
                         val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
                         val spanCount = if (isLandscape) 2 else 1
-                        textviewVersion.text = "App Version: ${BuildConfig.VERSION_NAME}"
+                        textviewVersion.text = "App Version: ${BuildConfig.VERSION_NAME} - "
+                        textviewPrivacyPolicy.setOnClickListener {
+                            val uri = getString(R.string.privacy_policy_url).toUri()
+                            val browserIntent = Intent(Intent.ACTION_VIEW, uri)
+                            startActivity(browserIntent)
+                        }
                         recyclerSettings.layoutManager = GridLayoutManager(requireContext(), spanCount)
                         recyclerSettings.adapter = settingsAdapter
                         buttonSave.setOnClickListener {
